@@ -1,0 +1,45 @@
+{
+  "name": "parse-utils",
+  "version": "0.0.0",
+  "description": "",
+  "private": true,
+  "keywords": [
+    "finance",
+    "plan",
+    "stocks",
+    "stock-market",
+    "dashboard"
+  ],
+  "author": "NewEra Systems",
+  "license": "proprietary",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "root": true,
+  "scripts": {
+    "pre-commit": "yarn run lint && yarn run prettier && yarn run test",
+    "lint": "eslint --cache --fix . --ext .js,.ts,.vue",
+    "prettier": "prettier --write --print-width  100 src/ spec/",
+    "test": "jest"
+  },
+  "dependencies": {
+    "async-mutex": "^0.3.1",
+    "parse": "^3.2.0",
+    "prettier": "^2.3.2",
+    "ts-node": "^10.1.0",
+    "typescript": "4.3.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "@types/node": "^14.17.2",
+    "@types/parse": "^2.18.6",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "eslint-plugin-varspacing": "^1.2.2",
+    "eslint-plugin-vue": "^7.10.0",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.3"
+  }
+}

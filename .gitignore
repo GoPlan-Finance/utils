@@ -1,0 +1,6 @@
+/parse/*.bak
+node_modules/
+/coverage
+*.bak
+/.eslintcache
+/.idea/workspace.xml
