@@ -46,6 +46,7 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@newera-systems'
       - run: yarn install
-      - run: yarn publish --tag=next
+#      - run: yarn version --patch
+      - run: yarn publish --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
