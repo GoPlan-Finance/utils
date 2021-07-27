@@ -28,7 +28,6 @@ jobs:
         env:
           CI: true
 
-
   publish-next:
     if: github.ref == 'refs/heads/master'
     needs: [ test ]
