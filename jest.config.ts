@@ -106,7 +106,7 @@ export default {
   },
 
   // moduleNameMapper : {
-  //   '^@common/(.*)$' : '<rootDir>/src/$1',
+  //   '^@utils/(.*)$' : '<rootDir>/src/$1',
   //   '^@models/(.*)$' : '<rootDir>/src/models/$1',
   //   '^@models$'      : '<rootDir>/src/models/index.ts',
   // },

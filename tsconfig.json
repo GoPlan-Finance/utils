@@ -17,13 +17,7 @@
     "outDir": "dist",
     "baseUrl": "",
     "paths": {
-      "@models/*": [
-        "./src/models/*"
-      ],
-      "@models": [
-        "./src/models/index.ts"
-      ],
-      "@common/*": [
+      "@utils/*": [
         "./src/*"
       ]
     }

@@ -1,6 +1,6 @@
-// import { ArrayUtils } from '@common/ArrayUtils'
+// import { ArrayUtils } from '@utils/ArrayUtils'
 
-import { ArrayUtils } from "@common/ArrayUtils";
+import { ArrayUtils } from "@utils/ArrayUtils";
 
 describe("ArrayUtils", () => {
   describe("unique", () => {

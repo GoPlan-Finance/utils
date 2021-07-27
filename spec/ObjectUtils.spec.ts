@@ -1,7 +1,7 @@
-// import { ArrayUtils } from '@common/ArrayUtils'
+// import { ArrayUtils } from '@utils/ArrayUtils'
 
-import { ArrayUtils } from "@common/ArrayUtils";
-import { ObjectUtils } from "@common/ObjectUtils";
+import { ArrayUtils } from "@utils/ArrayUtils";
+import { ObjectUtils } from "@utils/ObjectUtils";
 
 describe("ObjectUtils", () => {
   describe("findKeyWithHighestValue", () => {

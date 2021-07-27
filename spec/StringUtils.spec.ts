@@ -1,4 +1,4 @@
-import { StringUtils } from "@common/StringUtils";
+import { StringUtils } from "@utils/StringUtils";
 
 describe("StringUtils", () => {
   describe("properCase", () => {

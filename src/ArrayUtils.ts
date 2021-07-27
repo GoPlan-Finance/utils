@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { ObjectPathUtils } from "@common/ObjectPathUtils";
+import { ObjectPathUtils } from "@utils/ObjectPathUtils";
 
 type groupByFn<T, K> = (value: T, index: number) => K;
 

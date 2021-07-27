@@ -1,6 +1,6 @@
-// import { ArrayUtils } from '@common/ArrayUtils'
+// import { ArrayUtils } from '@utils/ArrayUtils'
 
-import { ObjectPathUtils } from "@common/ObjectPathUtils";
+import { ObjectPathUtils } from "@utils/ObjectPathUtils";
 
 describe("ObjectPathUtils", () => {
   describe("setPathValue", () => {
