@@ -18,7 +18,7 @@
   "homepage": "https://github.com/newera-systems/parse-utils",
   "root": true,
   "scripts": {
-    "pre-commit": "yarn run lint && yarn run prettier && yarn run test",
+    "pre-commit": "yarn run lint && yarn run prettier",
     "lint": "eslint --cache --fix . --ext .js,.ts,.vue",
     "prettier": "prettier --write  src/ spec/",
     "test": "jest"
