@@ -9,7 +9,7 @@ Parse.User.allowCustomUserClass(true);
 
 /*abstract*/
 export class User extends Parse.User {
-  static className = "_User";
+  static className = '_User';
 
   // get  () : string{
   //   return this.get('')
@@ -24,11 +24,11 @@ export class User extends Parse.User {
   }
 
   get createdAt(): Date {
-    return this.get("createdAt");
+    return this.get('createdAt');
   }
 
   get updatedAt(): Date {
-    return this.get("updatedAt");
+    return this.get('updatedAt');
   }
 
   public static register(): void {

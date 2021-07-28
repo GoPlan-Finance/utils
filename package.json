@@ -20,7 +20,7 @@
   "scripts": {
     "pre-commit": "yarn run lint && yarn run prettier && yarn run test",
     "lint": "eslint --cache --fix . --ext .js,.ts,.vue",
-    "prettier": "prettier --write --print-width  100 src/ spec/",
+    "prettier": "prettier --write  src/ spec/",
     "test": "jest"
   },
   "dependencies": {

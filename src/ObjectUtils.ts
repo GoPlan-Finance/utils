@@ -17,7 +17,7 @@ export class ObjectUtils {
 
   static getKeyByValue<V, T = unknown, U = string>(object: T, value: U): V {
     // @ts-expect-error any
-    return Object.keys(object).find((key) => object[key] === value);
+    return Object.keys(object).find(key => object[key] === value);
   }
 
   static deepClone<T>(object: T): T {

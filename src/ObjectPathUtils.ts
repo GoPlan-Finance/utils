@@ -4,7 +4,7 @@
 
 export class ObjectPathUtils {
   static setPathValue<T, U>(obj: T, path: string | string[], value: U): void {
-    const a = Array.isArray(path) ? path : path.split(".");
+    const a = Array.isArray(path) ? path : path.split('.');
     let o = obj;
     while (a.length - 1) {
       const n = a.shift();
@@ -29,9 +29,9 @@ export class ObjectPathUtils {
     if (Array.isArray(path)) {
       a = path;
     } else {
-      path = path.replace(/\[(\w+)\]/g, ".$1");
-      path = path.replace(/^\./, "");
-      a = path.split(".");
+      path = path.replace(/\[(\w+)\]/g, '.$1');
+      path = path.replace(/^\./, '');
+      a = path.split('.');
     }
 
     let o = obj;

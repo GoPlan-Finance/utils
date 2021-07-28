@@ -3,17 +3,17 @@
  *
  *
  */
-import { Mutex } from "async-mutex";
+import { Mutex } from 'async-mutex';
 
-import { BaseObject } from "./BaseObject";
-import { SecureObject } from "./SecureObject";
+import { BaseObject } from './BaseObject';
+import { SecureObject } from './SecureObject';
 
-export type LiveQueryUpdateFnEventType = null | "updated" | "created" | "deleted";
+export type LiveQueryUpdateFnEventType = null | 'updated' | 'created' | 'deleted';
 export type LiveQueryUpdateFn<T> = (obj: T, event: LiveQueryUpdateFnEventType) => void;
 export type Constructible<T> = new (...args: unknown[]) => T;
 
 export interface PointerInterface {
-  __type: string | "Pointer";
+  __type: string | 'Pointer';
   className: string;
   objectId: string;
 }
@@ -52,16 +52,16 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
         return;
       }
 
-      const promises = includes.split(",").map(async (include: string) => {
+      const promises = includes.split(',').map(async (include: string) => {
         const val = object.get(include);
 
-        if (val && val.__type === "Pointer") {
+        if (val && val.__type === 'Pointer') {
           const obj = await Parse.Object.extend(val.className)
             .createWithoutData(val.objectId)
             .fetch();
 
           object.set(include, obj);
-          console.warn("replaced pointer", val, obj);
+          console.warn('replaced pointer', val, obj);
         }
       });
 
@@ -80,7 +80,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
       }
 
       if (objects !== null) {
-        const index = objects.findIndex((o) => o.id === object.id);
+        const index = objects.findIndex(o => o.id === object.id);
 
         if (index !== -1) {
           objects[index] = object;
@@ -99,11 +99,11 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
       }
 
       if (updateFn) {
-        await updateFn(object, "deleted");
+        await updateFn(object, 'deleted');
       }
 
       if (objects !== null) {
-        const index = objects.findIndex((o) => o.id === object.id);
+        const index = objects.findIndex(o => o.id === object.id);
 
         if (index !== -1) {
           // delete objects[index]
@@ -127,15 +127,15 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
     const subscription = await this.subscribe();
 
-    subscription.on("create", (item) => {
-      replace(item as T, "created");
+    subscription.on('create', item => {
+      replace(item as T, 'created');
     });
 
-    subscription.on("update", (item) => {
-      replace(item as T, "updated");
+    subscription.on('update', item => {
+      replace(item as T, 'updated');
     });
 
-    subscription.on("delete", (item) => {
+    subscription.on('delete', item => {
       remove(item as T);
     });
 
@@ -153,8 +153,9 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     if (docId instanceof Parse.Object) {
       return docId;
     }
-    if (typeof docId === "object" && docId.__type === "Pointer") {
-      if (typeof docId.objectId === "string") {
+
+    if (typeof docId === 'object' && docId.__type === 'Pointer') {
+      if (typeof docId.objectId === 'string') {
         docId = docId.objectId;
       }
     }
@@ -169,7 +170,9 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   public async findBy(
-    params: { [key: string]: string | boolean | number | Parse.Object | Parse.Pointer },
+    params: {
+      [key: string]: string | boolean | number | Parse.Object | Parse.Pointer;
+    },
     useMasterKey = false
   ): Promise<T[]> {
     for (const [k, v] of Object.entries(params)) {

@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { ObjectPathUtils } from "@utils/ObjectPathUtils";
+import { ObjectPathUtils } from '@utils/ObjectPathUtils';
 
 type groupByFn<T, K> = (value: T, index: number) => K;
 
@@ -11,14 +11,14 @@ type groupByResult<T, K extends string | number> = { [key: string]: T[] };
 export class ArrayUtils {
   static randomElement<T>(items: T[]): T {
     if (!items.length) {
-      throw new Error("provided array is empty");
+      throw new Error('provided array is empty');
     }
 
     return items[Math.floor(Math.random() * (items.length - 1))];
   }
 
   static intersect<T>(array1: T[], array2: T[]): T[] {
-    return array1.filter((value) => array2.includes(value));
+    return array1.filter(value => array2.includes(value));
   }
 
   static shuffle<T>(array: T[]): T[] {

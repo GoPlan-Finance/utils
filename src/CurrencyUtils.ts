@@ -1,5 +1,5 @@
-import { padDecimals } from "common/MathUtils";
-import { Currencies } from "ts-money";
+import { padDecimals } from 'common/MathUtils';
+import { Currencies } from 'ts-money';
 
 interface CurrencyInfoInterface {
   decimal_digits: number;
@@ -9,7 +9,7 @@ interface CurrencyInfoInterface {
 export const getCurrencyInfo = (currency: string | null): CurrencyInfoInterface => {
   const info = {
     decimal_digits: 2,
-    symbol: "$",
+    symbol: '$',
   };
 
   if (!currency) {
@@ -35,7 +35,7 @@ export const formatCurrency = (
   const currencyInfo = getCurrencyInfo(currency);
 
   if (value === null || value === undefined) {
-    return "";
+    return '';
   }
 
   /* if (value instanceof Money) {
@@ -52,7 +52,7 @@ export const formatCurrency = (
     fixedDecimals ? currencyInfo.decimal_digits : Math.max(currencyInfo.decimal_digits, 4)
   );
 
-  if (["EUR", "GBP"].includes(currency)) {
+  if (['EUR', 'GBP'].includes(currency)) {
     return `${currencyInfo.symbol} ${valueStr}`;
   }
 

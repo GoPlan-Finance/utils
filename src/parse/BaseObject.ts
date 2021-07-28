@@ -25,11 +25,11 @@ export class BaseObject extends Parse.Object {
   }
 
   get createdAt(): Date {
-    return this.get("createdAt");
+    return this.get('createdAt');
   }
 
   get updatedAt(): Date {
-    return this.get("updatedAt");
+    return this.get('updatedAt');
   }
 
   public static register(): void {

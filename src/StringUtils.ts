@@ -20,7 +20,7 @@ export class StringUtils {
   }
 
   static hideZero(num: number): string {
-    return num === 0 ? "" : num.toString();
+    return num === 0 ? '' : num.toString();
   }
 
   static padDecimals(num: number, minDec = 0, maxDec = 4): string {
@@ -30,7 +30,7 @@ export class StringUtils {
     // 1.12000 -> 12
     const str = num.toFixed(maxDec).toString();
 
-    const dec = str.includes(".") ? str.split(".")[1].replace(/0+$/, "") : "";
+    const dec = str.includes('.') ? str.split('.')[1].replace(/0+$/, '') : '';
 
     const len = dec.length <= minDec ? minDec : maxDec;
 
@@ -56,14 +56,14 @@ export class StringUtils {
       return arr.join(glue);
     };
 
-    return [" ", "-"].reduce(
+    return [' ', '-'].reduce(
       (prev: string, glue: string) => makeCases(prev, glue),
       sentence.toLowerCase()
     );
   }
 
   static trimOrNull(str: string | undefined | null): string | null {
-    if (typeof str !== "string") {
+    if (typeof str !== 'string') {
       return null;
     }
 
