@@ -120,4 +120,26 @@ describe('ArrayUtils', () => {
       expect(() => ArrayUtils.randomElement([])).toThrowError('provided array is empty');
     });
   });
+
+  describe('filterByvalue', () => {
+    it('should return the filter element and value', () => {
+      const output = ArrayUtils.filterByValue(
+        [1, 5, 10],
+        (a, b) => a > b,
+        elem => elem * 10 + 1
+      );
+
+      expect(output).toStrictEqual({
+        key: '2',
+        elem: 10,
+        value: 101,
+      });
+    });
+
+    it('should throw when provided array is empty', () => {
+      const arr = Array.from(Array(100).keys());
+
+      expect(() => ArrayUtils.randomElement([])).toThrowError('provided array is empty');
+    });
+  });
 });

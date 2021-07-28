@@ -120,4 +120,52 @@ export class ArrayUtils {
 
     return out;
   }
+
+  /**
+   * Take an array, compute the values with valueFn() and filter the array by theses values, and retrieve the filtered
+   * element and its corresponding calculated value
+   *
+   * @param elems
+   * @param filterFn  Receive two values,  return true if  'a' is preferable than 'b'
+   * @param valueFn
+   *
+   * @example
+   * const output = ArrayUtils.filterByvalue(
+   *                    [ 1, 5 ,10],
+   *                    (a, b ) => a > b,
+   *                   elem => elem * 10 + 1 )
+   *
+   *  console.log(output)
+   *  { key : "3" , elem : 10,   val : 101 }
+   */
+  public static filterByValue<T, V>(
+    elems: T[],
+    filterFn: (a: V, b: V) => boolean,
+    valueFn: (elem: T) => V
+  ): { key: string; elem: T; value: V } {
+    const keys = Object.keys(elems);
+    const values = Object.values(elems);
+
+    if (values.length === 0) {
+      return null;
+    }
+
+    let index = 0;
+    let highestVal: V = undefined;
+
+    for (let i = 0; i < values.length; i++) {
+      const val = valueFn(values[i]);
+
+      if (highestVal === undefined || filterFn(val, highestVal)) {
+        index = i;
+        highestVal = val;
+      }
+    }
+
+    return {
+      key: keys[index],
+      elem: values[index],
+      value: highestVal,
+    };
+  }
 }
