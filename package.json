@@ -24,7 +24,6 @@
     "test": "jest"
   },
   "pre-commit": "pre-commit",
-
   "dependencies": {
     "async-mutex": "^0.3.1",
     "parse": "^3.2.0",
