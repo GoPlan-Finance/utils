@@ -8,7 +8,16 @@ import { Mutex } from 'async-mutex';
 import { BaseObject } from './BaseObject';
 import { SecureObject } from './SecureObject';
 
-export type LiveQueryUpdateFnEventType = null | 'updated' | 'created' | 'deleted';
+export type LiveQueryUpdateFnEventType =
+  | null
+  | 'open'
+  | 'create'
+  | 'update'
+  | 'enter'
+  | 'leave'
+  | 'delete'
+  | 'close';
+
 export type LiveQueryUpdateFn<T> = (obj: T, event: LiveQueryUpdateFnEventType) => void;
 export type Constructible<T> = new (...args: unknown[]) => T;
 
@@ -72,31 +81,6 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     objects: T[] | null = null,
     updateFn?: LiveQueryUpdateFn<T>
   ): Promise<Parse.LiveQuerySubscription> {
-    const expandIncludes = async (object: T) => {
-      // @todo  We can probably remove this. More testing needed to see if LiveSubscriptions return objects with
-      // include()
-      const includes = this.toJSON().include;
-
-      if (!includes) {
-        return;
-      }
-
-      const promises = includes.split(',').map(async (include: string) => {
-        const val = object.get(include);
-
-        if (val && val.__type === 'Pointer') {
-          const obj = await Parse.Object.extend(val.className)
-            .createWithoutData(val.objectId)
-            .fetch();
-
-          object.set(include, obj);
-          console.warn('replaced pointer', val, obj);
-        }
-      });
-
-      await Promise.all(promises);
-    };
-
     const replace = async (object: T, event: LiveQueryUpdateFnEventType) => {
       // await expandIncludes(object)
 
@@ -112,11 +96,13 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
         const index = objects.findIndex(o => o.id === object.id);
 
         if (index !== -1) {
+          console.log(`update ${index}`);
           objects[index] = object;
           return;
         }
 
         if (event) {
+          console.log(`add ${index}`);
           objects.push(object);
         }
       }
@@ -128,7 +114,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
       }
 
       if (updateFn) {
-        await updateFn(object, 'deleted');
+        await updateFn(object, 'delete');
       }
 
       if (objects !== null) {
@@ -142,31 +128,46 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     };
 
     if (objects) {
-      const tmpObjects: T[] = [];
+      const tmpObjects: T[] = this._getResults(await this.find());
 
-      for (const object of await this.find()) {
-        if (updateFn) {
+      if (updateFn) {
+        for (const object of tmpObjects) {
           await updateFn(object, null);
         }
-        tmpObjects.push(object);
       }
 
       objects.push(...tmpObjects);
     }
 
     const subscription = await this.subscribe();
+    // event: "open" | "create" | "update" | "enter" | "leave" | "delete" | "close"
+
+    // subscription.on('open', item => {
+    //   replace(item as T, 'created');
+    // });
 
     subscription.on('create', item => {
-      replace(item as T, 'created');
+      replace(item as T, 'create');
     });
 
     subscription.on('update', item => {
-      replace(item as T, 'updated');
+      replace(item as T, 'update');
+    });
+
+    subscription.on('enter', item => {
+      replace(item as T, 'enter');
+    });
+
+    subscription.on('leave', item => {
+      replace(item as T, 'leave');
     });
 
     subscription.on('delete', item => {
       remove(item as T);
     });
+
+    // subscription.on('close', item => {
+    // });
 
     return subscription;
   }
