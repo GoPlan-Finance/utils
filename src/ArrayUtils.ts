@@ -94,14 +94,20 @@ export class ArrayUtils {
   static toKeyValueArray<T, V>(
     objects: T[],
     key: keyof T,
-    valueKey: keyof T
+    valueKey: ((elem: T) => V) | keyof T
   ): { [key: string]: V } {
     const out: { [key: string]: V } = {};
 
     for (const object of objects) {
       const keyVal = object[key] as unknown as string;
       // noinspection UnnecessaryLocalVariableJS
-      const value = object[valueKey] as unknown as V;
+
+      let value = null;
+      if (typeof valueKey === 'function') {
+        value = valueKey(object);
+      } else {
+        value = object[valueKey] as unknown as V;
+      }
 
       out[keyVal] = value;
     }
