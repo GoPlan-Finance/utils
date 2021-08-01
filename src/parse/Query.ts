@@ -287,7 +287,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   private _getResults(objects: T[] | { results: T[]; count: number }): T[] {
-    if (Array.isArray(objects) && this.useWithCount) {
+    if (Array.isArray(objects) && !this.useWithCount ) {
       return objects;
     }
 
