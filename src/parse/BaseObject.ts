@@ -7,6 +7,8 @@
 // import Parse from 'parse'
 
 /*abstract*/
+import { PointerInterface } from '@utils/parse/Query';
+
 export class BaseObject extends Parse.Object {
   // get  () : string{
   //   return this.get('')
@@ -36,5 +38,15 @@ export class BaseObject extends Parse.Object {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore  error TS2339: Property 'className' does not exist on type 'typeof BaseObject'.
     Parse.Object.registerSubclass(this.className, this);
+  }
+
+  static createPointer(id: string): PointerInterface {
+    return {
+      __type: 'Pointer',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore  error TS2339: Property 'className' does not exist on type 'typeof BaseObject'.
+      className: this.className,
+      objectId: id,
+    };
   }
 }
