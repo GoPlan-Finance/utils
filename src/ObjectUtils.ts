@@ -9,6 +9,20 @@ export class ObjectUtils {
       }, {});
   }
 
+  /**
+   *
+   * @param unordered
+   * @param compareFn   Typically ( a, b ) => a - b
+   */
+  static sortByValue<T>(
+    unordered: { [key: string]: T },
+    compareFn: (a: T, b: T) => number
+  ): { [key: string]: T } {
+    return Object.fromEntries(
+      Object.entries(unordered).sort(([, a]: [unknown, T], [, b]: [unknown, T]) => compareFn(a, b))
+    );
+  }
+
   public static findKeyWithHighestValue<T>(values: { [key: string]: T }, n: number): string[] {
     return Object.keys(values) // @ts-expect-error  type mismatch
       .sort((a, b) => values[b] - values[a])
