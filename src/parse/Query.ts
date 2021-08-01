@@ -20,6 +20,7 @@ export interface PointerInterface {
 
 export class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
+  private useWithCount = false;
 
   // objectClass : Constructible<T>
 
@@ -31,6 +32,34 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   static create<U extends Parse.Object>(objectClass: Constructible<U>): Query<U> {
     return new Query<U>(objectClass);
+  }
+
+  static whereQueries<U extends Parse.Object>(
+    handler: 'and' | 'or' | 'nor',
+    queries: Array<Query<U>>
+  ): Query<U> {
+    const _getObjectClassForQueries = <U extends Parse.Object>(
+      queries: Query<U>[]
+    ): Constructible<U> => {
+      let objectClass: Constructible<U> = null;
+      queries.forEach(q => {
+        if (!objectClass) {
+          objectClass = q.objectClass;
+        }
+
+        if (objectClass !== q.objectClass) {
+          throw new Error('All queries must be for the same class.');
+        }
+      });
+      return objectClass;
+    };
+
+    const objectClass = _getObjectClassForQueries(queries);
+
+    const query = new Query<U>(objectClass);
+    // @ts-expect-error missing parse TS def
+    query[`_${handler}Query`](queries);
+    return query;
   }
 
   /**
@@ -192,7 +221,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
       this.equalTo(k, v);
     }
 
-    return this.first(BaseObject.useMasterKey(useMasterKey)) as Promise<T>;
+    return await this.first(BaseObject.useMasterKey(useMasterKey));
   }
 
   private createObject(): T {
@@ -236,8 +265,14 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
         return obj2;
       }
 
-      return obj2.save(null, BaseObject.useMasterKey(useMasterKey)) as Promise<T>;
+      return await obj2.save(null, BaseObject.useMasterKey(useMasterKey));
     });
+  }
+
+  public withCount(includeCount?: boolean): this {
+    this.useWithCount = includeCount;
+    super.withCount(includeCount);
+    return this;
   }
 
   public async get(objectId: string, options?: Parse.Query.GetOptions): Promise<T> {
@@ -250,14 +285,27 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     return obj;
   }
 
+  private _getResults(objects: T[] | { results: T[]; count: number }): T[] {
+    if (Array.isArray(objects) && this.useWithCount) {
+      return objects;
+    }
+
+    // @ts-expect-error missing TS in Parse
+    return objects.results;
+  }
+
   async find(options?: Parse.Query.FindOptions): Promise<T[]> {
     const objects = await super.find(options);
 
-    for (const obj of objects) {
-      if (obj instanceof SecureObject) {
-        await (obj as SecureObject).decrypt();
+    const maybeDecrypt = async (objs: T[]) => {
+      for (const obj of objs) {
+        if (obj instanceof SecureObject) {
+          await (obj as SecureObject).decrypt();
+        }
       }
-    }
+    };
+
+    await maybeDecrypt(this._getResults(objects));
 
     return objects;
   }
