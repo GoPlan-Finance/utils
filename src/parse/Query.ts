@@ -27,6 +27,10 @@ export interface PointerInterface {
   objectId: string;
 }
 
+interface QueryResultWithCount<T> {
+  results: T[];
+  count: number;
+}
 export class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
   private useWithCount = false;
@@ -177,20 +181,27 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   public async getObjectById(
-    docId: string | PointerInterface | T,
+    objectOrId: string | PointerInterface | T,
     useMasterKey = false
   ): Promise<T> {
-    if (docId instanceof Parse.Object) {
-      return docId;
-    }
+    let docId = null;
 
-    if (typeof docId === 'object' && docId.__type === 'Pointer') {
-      if (typeof docId.objectId === 'string') {
-        docId = docId.objectId;
+    if (typeof objectOrId === 'string') {
+      docId = objectOrId;
+    } else if (objectOrId instanceof Parse.Object) {
+      docId = objectOrId.id;
+    } else if (typeof objectOrId === 'object' && objectOrId.__type === 'Pointer') {
+      if (typeof objectOrId.objectId === 'string') {
+        docId = objectOrId.objectId;
       }
+    } else {
+      throw new Parse.Error(
+        Parse.Error.INVALID_QUERY,
+        `"objectOrId" must be either a string, a Pointer or a BaseObject`
+      );
     }
 
-    const doc = await this.getOrNull(docId as string, useMasterKey);
+    const doc = await this.getOrNull(docId, useMasterKey);
 
     if (doc) {
       return doc;
@@ -286,7 +297,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     return obj;
   }
 
-  private _getResults(objects: T[] | { results: T[]; count: number }): T[] {
+  private _getResults(objects: T[] | QueryResultWithCount<T>): T[] {
     if (Array.isArray(objects) && !this.useWithCount) {
       return objects;
     }
@@ -297,6 +308,24 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   async find(options?: Parse.Query.FindOptions): Promise<T[]> {
     const objects = await super.find(options);
+
+    const maybeDecrypt = async (objs: T[]) => {
+      for (const obj of objs) {
+        if (obj instanceof SecureObject) {
+          await (obj as SecureObject).decrypt();
+        }
+      }
+    };
+
+    await maybeDecrypt(this._getResults(objects));
+
+    return objects;
+  }
+
+  async findWithCount(options?: Parse.Query.FindOptions): Promise<QueryResultWithCount<T>> {
+    this.withCount(true);
+
+    const objects = (await super.find(options)) as unknown as QueryResultWithCount<T>;
 
     const maybeDecrypt = async (objs: T[]) => {
       for (const obj of objs) {
