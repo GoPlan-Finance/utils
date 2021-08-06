@@ -41,6 +41,13 @@ export class StringUtils {
     return /^([a-z0-9|-]+[a-z0-9]+\.)*[a-z0-9|-]+[a-z0-9]+\.[a-z]{2,}$/;
   }
 
+  static localeCompare(a:string, b:string , sensitivity : 'base' | 'accent' | 'case '|'variant') : boolean {
+    // https://www.techonthenet.com/js/string_localecompare.php
+    return typeof a === 'string' && typeof b === 'string'
+           ? a.localeCompare(b, undefined, { sensitivity }) === 0
+           : a === b;
+  }
+
   static properCase(sentence: string): string {
     if (!sentence || sentence.length === 0) {
       return sentence;
