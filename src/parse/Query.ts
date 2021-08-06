@@ -47,6 +47,14 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     return new Query<U>(objectClass);
   }
 
+  static fromJSON<U extends Parse.Object>(objectClass: Constructible<U>, json: any): Query<U> {
+    return Query.create(objectClass).withJSON(json);
+  }
+
+  public clone(): Query<T> {
+    return Query.create(this.objectClass as Constructible<T>).withJSON(this.toJSON());
+  }
+
   static whereQueries<U extends Parse.Object>(
     handler: 'and' | 'or' | 'nor',
     queries: Array<Query<U>>
