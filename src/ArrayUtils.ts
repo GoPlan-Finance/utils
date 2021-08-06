@@ -17,6 +17,10 @@ export class ArrayUtils {
     return items[Math.floor(Math.random() * (items.length - 1))];
   }
 
+  static fillWith<T>(len: number, initializer: () => T): T[] {
+    return new Array(len).map(initializer);
+  }
+
   static intersect<T>(array1: T[], array2: T[]): T[] {
     return array1.filter(value => array2.includes(value));
   }
@@ -175,3 +179,5 @@ export class ArrayUtils {
     };
   }
 }
+
+
