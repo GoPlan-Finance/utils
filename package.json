@@ -10,7 +10,7 @@
     "dashboard"
   ],
   "author": "NewEra Systems",
-  "license": "proprietary",
+   "private": true,
   "bugs": {
     "url": "https://github.com/newera-systems/parse-utils"
   },
