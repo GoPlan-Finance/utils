@@ -1,6 +1,26 @@
 import { ArrayUtils } from '@utils/ArrayUtils';
 
 describe('ArrayUtils', () => {
+
+  describe('fillWith', () => {
+    it('should call initializer on every items', function () {
+      let i  = 1
+      const initializer  = () => i++ ;
+
+      const val = ArrayUtils.fillWith(4 , initializer);
+      expect(val).toStrictEqual([1, 2, 3, 4]);
+    });
+
+    it('should remove duplicate items', function () {
+      const data = [1, 2, 3, 4, 4, 4];
+
+      const val = ArrayUtils.unique(data);
+      expect(val).toStrictEqual([1, 2, 3, 4]);
+    });
+  });
+
+
+
   describe('unique', () => {
     it('should return all non unique items', function () {
       const data = [1, 2, 3, 4];

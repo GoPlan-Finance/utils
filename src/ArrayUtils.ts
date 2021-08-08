@@ -17,8 +17,8 @@ export class ArrayUtils {
     return items[Math.floor(Math.random() * (items.length - 1))];
   }
 
-  static fillWith<T>(len: number, initializer: () => T): T[] {
-    return new Array(len).map(initializer);
+  static fillWith<T>(length: number, initializer: (index: number) => T): T[] {
+    return Array.from({ length }, (_, i) => initializer(i));
   }
 
   static intersect<T>(array1: T[], array2: T[]): T[] {
