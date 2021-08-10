@@ -22,6 +22,9 @@
     "prettier": "prettier --write  src/ spec/",
     "test": "jest"
   },
+  "exports": {
+    "./": "./src/"
+  },
   "pre-commit": "pre-commit",
   "dependencies": {
     "async-mutex": "^0.3.1",
