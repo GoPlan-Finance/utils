@@ -8,7 +8,7 @@ export class ObjectPathUtils {
     let o = obj;
     while (a.length - 1) {
       const n = a.shift();
-      if (!(n in o)) {
+      if (n && !(n in o)) {
         // @ts-expect-error implicit any
         o[n] = {};
       }
@@ -22,9 +22,9 @@ export class ObjectPathUtils {
   static getPathValue<U, T = unknown>(
     obj: T,
     path: string | string[],
-    defaultVal: U = undefined
+    defaultVal?: U
   ): U {
-    let a = [];
+    let a : string[] = [];
 
     if (Array.isArray(path)) {
       a = path;
@@ -37,7 +37,7 @@ export class ObjectPathUtils {
     let o = obj;
     while (a.length) {
       const n = a.shift();
-      if (!(n in o)) {
+      if (n && !(n in o)) {
         return defaultVal;
       }
       // @ts-expect-error implicit any
