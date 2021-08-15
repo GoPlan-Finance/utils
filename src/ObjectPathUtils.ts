@@ -19,12 +19,8 @@ export class ObjectPathUtils {
     o[a[0]] = value;
   }
 
-  static getPathValue<U, T = unknown>(
-    obj: T,
-    path: string | string[],
-    defaultVal?: U
-  ): U {
-    let a : string[] = [];
+  static getPathValue<U, T = unknown>(obj: T, path: string | string[], defaultVal?: U): U {
+    let a: string[] = [];
 
     if (Array.isArray(path)) {
       a = path;
