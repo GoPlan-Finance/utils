@@ -3,6 +3,7 @@
  *
  *
  */
+import { User } from '@utils/parse/User';
 import { Mutex } from 'async-mutex';
 
 import { BaseObject } from './BaseObject';
@@ -31,11 +32,14 @@ interface QueryResultWithCount<T> {
   results: T[];
   count: number;
 }
+
 export class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
   private useWithCount = false;
+  private sessionToken: string = null;
 
   // objectClass : Constructible<T>
+  private masterKey: boolean;
 
   constructor(objectClass: Constructible<T>) {
     super(objectClass);
@@ -53,6 +57,16 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   public clone(): Query<T> {
     return Query.create(this.objectClass as Constructible<T>).withJSON(this.toJSON());
+  }
+
+  public runAsUser(user: User | null): this {
+    this.sessionToken = user ? user.getSessionToken() : null;
+    return this;
+  }
+
+  public useMasterKey(useMasterKey: boolean): this {
+    this.masterKey = useMasterKey;
+    return this;
   }
 
   static whereQueries<U extends Parse.Object>(
@@ -185,7 +199,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   public async getOrNull(docId: string, useMasterKey = false): Promise<T> {
-    return this.get(docId, BaseObject.useMasterKey(useMasterKey));
+    return this.get(docId, this.prepareOptions({}, useMasterKey));
   }
 
   public async getObjectById(
@@ -237,11 +251,13 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     params: Partial<Pick<T, K>> | T,
     useMasterKey = false
   ): Promise<T | undefined> {
+    const options = this.prepareOptions({}, useMasterKey);
+
     for (const [k, v] of Object.entries(params)) {
       this.equalTo(k, v);
     }
 
-    return await this.first(BaseObject.useMasterKey(useMasterKey));
+    return await this.first(options);
   }
 
   private createObject(): T {
@@ -295,7 +311,30 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     return this;
   }
 
+  private prepareOptions(
+    options: Parse.FullOptions | undefined,
+    useMasterKey?: boolean
+  ): Parse.FullOptions {
+    if (!options) {
+      options = {} as Parse.FullOptions;
+    }
+
+    options.sessionToken = this.sessionToken ?? null;
+
+    if (this.masterKey === true) {
+      options.useMasterKey = true;
+    }
+
+    if (useMasterKey !== undefined) {
+      options.useMasterKey = useMasterKey;
+    }
+
+    return options;
+  }
+
   public async get(objectId: string, options?: Parse.Query.GetOptions): Promise<T> {
+    options = this.prepareOptions(options);
+
     const obj = await super.get(objectId, options);
 
     if (obj instanceof SecureObject) {
@@ -315,6 +354,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   async find(options?: Parse.Query.FindOptions): Promise<T[]> {
+    options = this.prepareOptions(options);
     const objects = await super.find(options);
 
     const maybeDecrypt = async (objs: T[]) => {
