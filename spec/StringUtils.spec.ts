@@ -32,68 +32,68 @@ describe('StringUtils', () => {
     });
   }); // properCase
 
-  describe('toFloatOrNull', ()=>{
-    it('should return null', function(){
+  describe('toFloatOrNull', () => {
+    it('should return null', function () {
       const response = StringUtils.toFloatOrNull('');
       expect(response).toStrictEqual(null);
-    })
-    it('should return 1', function(){
+    });
+    it('should return 1', function () {
       const response = StringUtils.toFloatOrNull('1.00');
       expect(response).toStrictEqual(1);
-    })
-    it('should return 3.14', function(){
+    });
+    it('should return 3.14', function () {
       const response = StringUtils.toFloatOrNull('3.14');
       expect(response).toStrictEqual(3.14);
-    })
-  })
-  describe('toFixedOrNull', ()=>{
-    it('should return null', function(){
+    });
+  });
+  describe('toFixedOrNull', () => {
+    it('should return null', function () {
       const response = StringUtils.toFloatOrNull('');
       expect(response).toStrictEqual(null);
-    })
-    it('should return 1', function(){
+    });
+    it('should return 1', function () {
       const response = StringUtils.toFloatOrNull('1.00');
       expect(response).toStrictEqual(1);
-    })
-    it('should return 3', function(){
+    });
+    it('should return 3', function () {
       const response = StringUtils.toFloatOrNull('3');
       expect(response).toStrictEqual(3);
-    })
-  })
+    });
+  });
 
-  describe('hideZero', ()=>{
-    it('should return 1000', function(){
+  describe('hideZero', () => {
+    it('should return 1000', function () {
       const response = StringUtils.hideZero(1000);
       expect(response).toStrictEqual('1000');
-    })
-    it('should return nothing', function(){
+    });
+    it('should return nothing', function () {
       const response = StringUtils.hideZero(0);
       expect(response).toStrictEqual('');
-    })
-  })
+    });
+  });
 
-  describe('localeCompare', ()=>{
-    it('should not be equal', function(){
-      const response = StringUtils.localeCompare('hello', 'world',"base");
+  describe('localeCompare', () => {
+    it('should not be equal', function () {
+      const response = StringUtils.localeCompare('hello', 'world', 'base');
       expect(response).toStrictEqual(false);
-    })
-    it('should be equal', function(){
-      const response = StringUtils.localeCompare('hello', 'hello',"base");
+    });
+    it('should be equal', function () {
+      const response = StringUtils.localeCompare('hello', 'hello', 'base');
       expect(response).toStrictEqual(true);
-    })
-    it('should be comparing accent', function(){
-      const response = StringUtils.localeCompare('hee', 'hée',"accent");
+    });
+    it('should be comparing accent', function () {
+      const response = StringUtils.localeCompare('hee', 'hée', 'accent');
       expect(response).toStrictEqual(false);
-    })
-  })
-  describe('trimOrNull', ()=>{
-    it('should return null', function(){
+    });
+  });
+  describe('trimOrNull', () => {
+    it('should return null', function () {
       const response = StringUtils.trimOrNull(null);
       expect(response).toStrictEqual(null);
-    })
-    it('should trim', function(){
-      const response = StringUtils.trimOrNull("  test ");
+    });
+    it('should trim', function () {
+      const response = StringUtils.trimOrNull('  test ');
       expect(response).toStrictEqual('test');
-    })
-  })
+    });
+  });
 });
