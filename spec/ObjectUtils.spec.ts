@@ -25,41 +25,38 @@ describe('ObjectUtils', () => {
   });
 
   describe('sortByValue', () => {
-    const list = {
-      a: 12,
-      f: 23,
-      c: 1,
-      e: 3,
-    };
     const ascWay = (a: number, b: number): number => a - b;
     it('should return in asc order', () => {
-      const response = ObjectUtils.sortByValue<number>(list, ascWay);
-      expect(response[Object.keys(response)[0]]).toBe(list['c']);
+      const response = ObjectUtils.sortByValue<number>({
+        a: 12,
+        f: 23,
+        c: 1,
+        e: 3,
+      }, ascWay);
+      expect(response[Object.keys(response)[0]]).toBe(1);
     });
   });
 
   describe('sortByKeys', () => {
     it('should sort keys', function () {
-      const list = {
+      const response = ObjectUtils.sortByKeys({
         d: 12,
         f: 23,
         c: 1,
         e: 3,
-      };
-      const response = ObjectUtils.sortByKeys(list);
-      expect(response[Object.keys(response)[0]]).toBe(list['c']);
+      });
+      expect(response[Object.keys(response)[0]]).toBe(1);
     });
   });
 
   describe('getKeyByValue', () => {
     it('should find key', function () {
-      const list = {
+      const response = ObjectUtils.getKeyByValue({
         a: 12,
         f: 23,
         c: 1,
         e: 3,
-      };
-      const response = ObjectUtils.getKeyByValue(list, 12);
+      }, 12);
       expect(response).toBe('a');
     });
   });
@@ -72,6 +69,16 @@ describe('ObjectUtils', () => {
       };
       const beta = ObjectUtils.deepClone(alpha);
       expect(beta['a']).toBe(alpha['a']);
+      expect(beta['b']).toBe(alpha['b']);
+    });
+    it('should be a new object', function () {
+      const alpha = {
+        a: 23,
+        b: 'hello world',
+      };
+      const beta = ObjectUtils.deepClone(alpha);
+      alpha.a = 12;
+      expect(beta['a']).not.toBe(alpha['a']);
       expect(beta['b']).toBe(alpha['b']);
     });
   });

@@ -48,15 +48,15 @@ describe('StringUtils', () => {
   });
   describe('toFixedOrNull', () => {
     it('should return null', function () {
-      const response = StringUtils.toFloatOrNull('');
+      const response = StringUtils.toFixedOrNull('');
       expect(response).toStrictEqual(null);
     });
     it('should return 1', function () {
-      const response = StringUtils.toFloatOrNull('1.00');
+      const response = StringUtils.toFixedOrNull('1.00');
       expect(response).toStrictEqual(1);
     });
     it('should return 3', function () {
-      const response = StringUtils.toFloatOrNull('3');
+      const response = StringUtils.toFixedOrNull('3');
       expect(response).toStrictEqual(3);
     });
   });
