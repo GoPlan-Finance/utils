@@ -27,12 +27,15 @@ describe('ObjectUtils', () => {
   describe('sortByValue', () => {
     const ascWay = (a: number, b: number): number => a - b;
     it('should return in asc order', () => {
-      const response = ObjectUtils.sortByValue<number>({
-        a: 12,
-        f: 23,
-        c: 1,
-        e: 3,
-      }, ascWay);
+      const response = ObjectUtils.sortByValue<number>(
+        {
+          a: 12,
+          f: 23,
+          c: 1,
+          e: 3,
+        },
+        ascWay
+      );
       expect(response[Object.keys(response)[0]]).toBe(1);
     });
   });
@@ -51,12 +54,15 @@ describe('ObjectUtils', () => {
 
   describe('getKeyByValue', () => {
     it('should find key', function () {
-      const response = ObjectUtils.getKeyByValue({
-        a: 12,
-        f: 23,
-        c: 1,
-        e: 3,
-      }, 12);
+      const response = ObjectUtils.getKeyByValue(
+        {
+          a: 12,
+          f: 23,
+          c: 1,
+          e: 3,
+        },
+        12
+      );
       expect(response).toBe('a');
     });
   });
