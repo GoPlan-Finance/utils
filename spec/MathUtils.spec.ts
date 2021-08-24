@@ -31,7 +31,7 @@ describe('MathUtils', () => {
     });
     it('should be between min and max', () => {
       const found = MathUtils.randomNumber(12, 23);
-      const value = found >= min && found <= max;
+      const value = found >= 12 && found <= 23;
       expect(value).toBe(true);
     });
   });
