@@ -1,6 +1,5 @@
 import { processBatch, PromiseWaitAllNested, sleep } from '@utils/ProcessUtils';
 
-
 describe('ProcessUtils', function () {
   describe('sleep', function () {
     it('should wait 3ms', async () => {
@@ -12,27 +11,27 @@ describe('ProcessUtils', function () {
 
   describe('processBatch', function () {
     it('should loop over all if no error', async () => {
-      const worker             = async (data : number) : Promise<number> => {
+      const worker = async (data: number): Promise<number> => {
         return 1;
       };
-      const status             = async (curIndex : number, length : number, result : number) : Promise<boolean> => {
+      const status = async (curIndex: number, length: number, result: number): Promise<boolean> => {
         return true;
       };
-      const list : number[]    = [0, 1, 2, 3, 4];
-      const results : number[] = await processBatch(list, worker, status);
+      const list: number[] = [0, 1, 2, 3, 4];
+      const results: number[] = await processBatch(list, worker, status);
       expect(results[0]).toBe(1);
     });
     it('should abort if status is false', async () => {
-      let i                    = 1;
-      const worker             = async (data : number) : Promise<number> => {
+      let i = 1;
+      const worker = async (data: number): Promise<number> => {
         return 1;
       };
-      const status             = async (curIndex : number, length : number, result : number) : Promise<boolean> => {
+      const status = async (curIndex: number, length: number, result: number): Promise<boolean> => {
         i++;
         return i <= 2;
       };
-      const list : number[]    = [0, 1, 2, 3, 4, 5, 6];
-      const results : number[] = await processBatch(list, worker, status, 2);
+      const list: number[] = [0, 1, 2, 3, 4, 5, 6];
+      const results: number[] = await processBatch(list, worker, status, 2);
       expect(results.length).toBe(3);
     });
   });
@@ -42,18 +41,21 @@ describe('ProcessUtils', function () {
       const mock = jest.fn();
 
       const list = [
+        // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async resolve => {
           mock();
           await sleep(100);
           mock();
           resolve();
         }),
+        // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async resolve => {
           mock();
           await sleep(200);
           mock();
           resolve();
         }),
+        // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async resolve => {
           mock();
           await sleep(300);
@@ -67,20 +69,23 @@ describe('ProcessUtils', function () {
     });
 
     it('should wait for all nested/recurring promises to be finished', async () => {
-      const t    = Date.now();
+      const t = Date.now();
       const mock = jest.fn();
 
       const list = [
+        // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async resolve => {
           await sleep(100);
           mock();
 
           list.push(
+            // eslint-disable-next-line no-async-promise-executor
             new Promise<void>(async resolve => {
               await sleep(300);
               mock();
 
               list.push(
+                // eslint-disable-next-line no-async-promise-executor
                 new Promise<void>(async resolve => {
                   await sleep(300);
                   mock();
@@ -93,6 +98,7 @@ describe('ProcessUtils', function () {
 
           resolve();
         }),
+        // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async resolve => {
           await sleep(200);
           mock();

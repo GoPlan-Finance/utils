@@ -51,7 +51,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     return new Query<U>(objectClass);
   }
 
-  static fromJSON<U extends Parse.Object>(objectClass: Constructible<U>, json: any): Query<U> {
+  static fromJSON<U extends Parse.Object>(objectClass: Constructible<U>, json: unknown): Query<U> {
     return Query.create(objectClass).withJSON(json);
   }
 
