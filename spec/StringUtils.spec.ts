@@ -91,9 +91,51 @@ describe('StringUtils', () => {
       const response = StringUtils.trimOrNull(null);
       expect(response).toStrictEqual(null);
     });
+
+    it('should return null on empty string', function () {
+      expect(StringUtils.trimOrNull('')).toStrictEqual(null);
+      expect(StringUtils.trimOrNull(' ')).toStrictEqual(null);
+      expect(StringUtils.trimOrNull("\t")).toStrictEqual(null);
+      expect(StringUtils.trimOrNull("\t\r\n")).toStrictEqual(null);
+    });
+
     it('should trim', function () {
       const response = StringUtils.trimOrNull('  test ');
       expect(response).toStrictEqual('test');
+    });
+  });
+  describe('getDomainNameRegex', () => {
+    it('should pad the appropriate number of didgits', function () {
+      const regex = StringUtils.getDomainNameRegex()
+
+
+      expect(StringUtils.padDecimals(1.000000001, 5, 5)).toStrictEqual('1.00000');
+    });
+  });
+
+  describe('padDecimals', () => {
+    it('should pad the appropriate number of didgits', function () {
+      expect(StringUtils.padDecimals(1, 0, 1)).toStrictEqual('1');
+      expect(StringUtils.padDecimals(1.1, 0, 1)).toStrictEqual('1.1');
+      expect(StringUtils.padDecimals(1.11, 0, 1)).toStrictEqual('1.1');
+      expect(StringUtils.padDecimals(1.111, 0, 2)).toStrictEqual('1.11');
+
+      expect(StringUtils.padDecimals(1, 0, 1)).toStrictEqual('1');
+      expect(StringUtils.padDecimals(1.9, 0, 1)).toStrictEqual('1.9');
+
+      expect(StringUtils.padDecimals(1.99, 0, 0)).toStrictEqual('2');
+      expect(StringUtils.padDecimals(1.99, 1, 1)).toStrictEqual('2.0');
+      expect(StringUtils.padDecimals(1.99, 2, 2)).toStrictEqual('1.99');
+
+      expect(StringUtils.padDecimals(1.899, 1, 1)).toStrictEqual('1.9');
+      expect(StringUtils.padDecimals(1.899, 2, 2)).toStrictEqual('1.90');
+      expect(StringUtils.padDecimals(1.899, 3, 3)).toStrictEqual('1.899');
+
+      expect(StringUtils.padDecimals(1.111111111, 0, 5)).toStrictEqual('1.11111');
+      expect(StringUtils.padDecimals(1.111111111, 5, 5)).toStrictEqual('1.11111');
+
+      expect(StringUtils.padDecimals(1.000000001, 0, 5)).toStrictEqual('1');
+      expect(StringUtils.padDecimals(1.000000001, 5, 5)).toStrictEqual('1.00000');
     });
   });
 });
