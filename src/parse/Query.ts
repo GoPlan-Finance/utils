@@ -122,13 +122,11 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
         const index = objects.findIndex(o => o.id === object.id);
 
         if (index !== -1) {
-          console.log(`update ${index}`);
           objects[index] = object;
           return;
         }
 
         if (event) {
-          console.log(`add ${index}`);
           objects.push(object);
         }
       }

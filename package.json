@@ -10,7 +10,7 @@
     "dashboard"
   ],
   "author": "NewEra Systems",
-   "private": true,
+  "private": true,
   "bugs": {
     "url": "https://github.com/GoPlan-Finance/utils"
   },
