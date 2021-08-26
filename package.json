@@ -1,5 +1,5 @@
 {
-  "name": "@newera-systems/parse-utils",
+  "name": "@goplan-finance/utils",
   "version": "1.0.0",
   "description": "",
   "keywords": [
@@ -12,10 +12,10 @@
   "author": "NewEra Systems",
    "private": true,
   "bugs": {
-    "url": "https://github.com/newera-systems/parse-utils"
+    "url": "https://github.com/GoPlan-Finance/utils"
   },
-  "repository": "https://github.com/newera-systems/parse-utils",
-  "homepage": "https://github.com/newera-systems/parse-utils",
+  "repository": "https://github.com/GoPlan-Finance/utils",
+  "homepage": "https://github.com/GoPlan-Finance/utils",
   "scripts": {
     "pre-commit": "yarn run lint && yarn run prettier",
     "lint": "eslint --cache --fix . --ext .js,.ts,.vue",
