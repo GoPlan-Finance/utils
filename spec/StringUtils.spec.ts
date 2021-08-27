@@ -95,8 +95,8 @@ describe('StringUtils', () => {
     it('should return null on empty string', function () {
       expect(StringUtils.trimOrNull('')).toStrictEqual(null);
       expect(StringUtils.trimOrNull(' ')).toStrictEqual(null);
-      expect(StringUtils.trimOrNull("\t")).toStrictEqual(null);
-      expect(StringUtils.trimOrNull("\t\r\n")).toStrictEqual(null);
+      expect(StringUtils.trimOrNull('\t')).toStrictEqual(null);
+      expect(StringUtils.trimOrNull('\t\r\n')).toStrictEqual(null);
     });
 
     it('should trim', function () {
@@ -106,8 +106,7 @@ describe('StringUtils', () => {
   });
   describe('getDomainNameRegex', () => {
     it('should pad the appropriate number of didgits', function () {
-      const regex = StringUtils.getDomainNameRegex()
-
+      const regex = StringUtils.getDomainNameRegex();
 
       expect(StringUtils.padDecimals(1.000000001, 5, 5)).toStrictEqual('1.00000');
     });
