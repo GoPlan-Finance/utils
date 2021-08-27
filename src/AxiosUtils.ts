@@ -1,4 +1,4 @@
-import axios, { CancelTokenSource } from "axios";
+import axios, { CancelTokenSource } from 'axios';
 
 function axiosGetRequestWithAbortFactory() {
   // eslint-disable-next-line init-declarations

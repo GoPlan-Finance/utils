@@ -3,25 +3,43 @@
  *
  *
  */
-import { Mutex } from "async-mutex";
+import { User } from '@utils/parse/User';
+import { Mutex } from 'async-mutex';
 
-import { BaseObject } from "./BaseObject";
-import { SecureObject } from "./SecureObject";
+import { BaseObject } from './BaseObject';
+import { SecureObject } from './SecureObject';
 
-export type LiveQueryUpdateFnEventType = null | "updated" | "created" | "deleted";
+export type LiveQueryUpdateFnEventType =
+  | null
+  | 'open'
+  | 'create'
+  | 'update'
+  | 'enter'
+  | 'leave'
+  | 'delete'
+  | 'close';
+
 export type LiveQueryUpdateFn<T> = (obj: T, event: LiveQueryUpdateFnEventType) => void;
 export type Constructible<T> = new (...args: unknown[]) => T;
 
 export interface PointerInterface {
-  __type: string | "Pointer";
+  __type: string | 'Pointer';
   className: string;
   objectId: string;
 }
 
+interface QueryResultWithCount<T> {
+  results: T[];
+  count: number;
+}
+
 export class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
+  private useWithCount = false;
+  private sessionToken: string = null;
 
   // objectClass : Constructible<T>
+  private masterKey: boolean;
 
   constructor(objectClass: Constructible<T>) {
     super(objectClass);
@@ -31,6 +49,52 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   static create<U extends Parse.Object>(objectClass: Constructible<U>): Query<U> {
     return new Query<U>(objectClass);
+  }
+
+  static fromJSON<U extends Parse.Object>(objectClass: Constructible<U>, json: any): Query<U> {
+    return Query.create(objectClass).withJSON(json);
+  }
+
+  public clone(): Query<T> {
+    return Query.create(this.objectClass as Constructible<T>).withJSON(this.toJSON());
+  }
+
+  public runAsUser(user: User | null): this {
+    this.sessionToken = user ? user.getSessionToken() : null;
+    return this;
+  }
+
+  public useMasterKey(useMasterKey: boolean): this {
+    this.masterKey = useMasterKey;
+    return this;
+  }
+
+  static whereQueries<U extends Parse.Object>(
+    handler: 'and' | 'or' | 'nor',
+    queries: Array<Query<U>>
+  ): Query<U> {
+    const _getObjectClassForQueries = <U extends Parse.Object>(
+      queries: Query<U>[]
+    ): Constructible<U> => {
+      let objectClass: Constructible<U> = null;
+      queries.forEach(q => {
+        if (!objectClass) {
+          objectClass = q.objectClass;
+        }
+
+        if (objectClass !== q.objectClass) {
+          throw new Error('All queries must be for the same class.');
+        }
+      });
+      return objectClass;
+    };
+
+    const objectClass = _getObjectClassForQueries(queries);
+
+    const query = new Query<U>(objectClass);
+    // @ts-expect-error missing parse TS def
+    query[`_${handler}Query`](queries);
+    return query;
   }
 
   /**
@@ -43,31 +107,6 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     objects: T[] | null = null,
     updateFn?: LiveQueryUpdateFn<T>
   ): Promise<Parse.LiveQuerySubscription> {
-    const expandIncludes = async (object: T) => {
-      // @todo  We can probably remove this. More testing needed to see if LiveSubscriptions return objects with
-      // include()
-      const includes = this.toJSON().include;
-
-      if (!includes) {
-        return;
-      }
-
-      const promises = includes.split(",").map(async (include: string) => {
-        const val = object.get(include);
-
-        if (val && val.__type === "Pointer") {
-          const obj = await Parse.Object.extend(val.className)
-            .createWithoutData(val.objectId)
-            .fetch();
-
-          object.set(include, obj);
-          console.warn("replaced pointer", val, obj);
-        }
-      });
-
-      await Promise.all(promises);
-    };
-
     const replace = async (object: T, event: LiveQueryUpdateFnEventType) => {
       // await expandIncludes(object)
 
@@ -80,14 +119,16 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
       }
 
       if (objects !== null) {
-        const index = objects.findIndex((o) => o.id === object.id);
+        const index = objects.findIndex(o => o.id === object.id);
 
         if (index !== -1) {
+          console.log(`update ${index}`);
           objects[index] = object;
           return;
         }
 
         if (event) {
+          console.log(`add ${index}`);
           objects.push(object);
         }
       }
@@ -99,11 +140,11 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
       }
 
       if (updateFn) {
-        await updateFn(object, "deleted");
+        await updateFn(object, 'delete');
       }
 
       if (objects !== null) {
-        const index = objects.findIndex((o) => o.id === object.id);
+        const index = objects.findIndex(o => o.id === object.id);
 
         if (index !== -1) {
           // delete objects[index]
@@ -113,53 +154,76 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     };
 
     if (objects) {
-      const tmpObjects: T[] = [];
+      const tmpObjects: T[] = this._getResults(await this.find());
 
-      for (const object of await this.find()) {
-        if (updateFn) {
+      if (updateFn) {
+        for (const object of tmpObjects) {
           await updateFn(object, null);
         }
-        tmpObjects.push(object);
       }
 
       objects.push(...tmpObjects);
     }
 
     const subscription = await this.subscribe();
+    // event: "open" | "create" | "update" | "enter" | "leave" | "delete" | "close"
 
-    subscription.on("create", (item) => {
-      replace(item as T, "created");
+    // subscription.on('open', item => {
+    //   replace(item as T, 'created');
+    // });
+
+    subscription.on('create', item => {
+      replace(item as T, 'create');
     });
 
-    subscription.on("update", (item) => {
-      replace(item as T, "updated");
+    subscription.on('update', item => {
+      replace(item as T, 'update');
     });
 
-    subscription.on("delete", (item) => {
+    subscription.on('enter', item => {
+      replace(item as T, 'enter');
+    });
+
+    subscription.on('leave', item => {
+      replace(item as T, 'leave');
+    });
+
+    subscription.on('delete', item => {
       remove(item as T);
     });
+
+    // subscription.on('close', item => {
+    // });
 
     return subscription;
   }
 
   public async getOrNull(docId: string, useMasterKey = false): Promise<T> {
-    return this.get(docId, BaseObject.useMasterKey(useMasterKey));
+    return this.get(docId, this.prepareOptions({}, useMasterKey));
   }
 
   public async getObjectById(
-    docId: string | PointerInterface | T,
+    objectOrId: string | PointerInterface | T,
     useMasterKey = false
   ): Promise<T> {
-    if (docId instanceof Parse.Object) {
-      return docId;
-    }
-    if (typeof docId === "object" && docId.__type === "Pointer") {
-      if (typeof docId.objectId === "string") {
-        docId = docId.objectId;
+    let docId = null;
+
+    if (typeof objectOrId === 'string') {
+      docId = objectOrId;
+    } else if (objectOrId instanceof Parse.Object) {
+      docId = objectOrId.id;
+    } else if (typeof objectOrId === 'object' && objectOrId.__type === 'Pointer') {
+      if (typeof objectOrId.objectId === 'string') {
+        docId = objectOrId.objectId;
       }
+    } else {
+      throw new Parse.Error(
+        Parse.Error.INVALID_QUERY,
+        `"objectOrId" must be either a string, a Pointer or a BaseObject`
+      );
     }
 
-    const doc = await this.getOrNull(docId as string, useMasterKey);
+    const doc = await this.getOrNull(docId, useMasterKey);
 
     if (doc) {
       return doc;
@@ -169,7 +233,9 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   public async findBy(
-    params: { [key: string]: string | boolean | number | Parse.Object | Parse.Pointer },
+    params: {
+      [key: string]: string | boolean | number | Parse.Object | Parse.Pointer;
+    },
     useMasterKey = false
   ): Promise<T[]> {
     for (const [k, v] of Object.entries(params)) {
@@ -185,11 +251,13 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     params: Partial<Pick<T, K>> | T,
     useMasterKey = false
   ): Promise<T | undefined> {
+    const options = this.prepareOptions({}, useMasterKey);
+
     for (const [k, v] of Object.entries(params)) {
       this.equalTo(k, v);
     }
 
-    return this.first(BaseObject.useMasterKey(useMasterKey)) as Promise<T>;
+    return await this.first(options);
   }
 
   private createObject(): T {
@@ -233,11 +301,40 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
         return obj2;
       }
 
-      return obj2.save(null, BaseObject.useMasterKey(useMasterKey)) as Promise<T>;
+      return await obj2.save(null, BaseObject.useMasterKey(useMasterKey));
     });
   }
 
+  public withCount(includeCount?: boolean): this {
+    this.useWithCount = includeCount;
+    super.withCount(includeCount);
+    return this;
+  }
+
+  private prepareOptions(
+    options: Parse.FullOptions | undefined,
+    useMasterKey?: boolean
+  ): Parse.FullOptions {
+    if (!options) {
+      options = {} as Parse.FullOptions;
+    }
+
+    options.sessionToken = this.sessionToken ?? null;
+
+    if (this.masterKey === true) {
+      options.useMasterKey = true;
+    }
+
+    if (useMasterKey !== undefined) {
+      options.useMasterKey = useMasterKey;
+    }
+
+    return options;
+  }
+
   public async get(objectId: string, options?: Parse.Query.GetOptions): Promise<T> {
+    options = this.prepareOptions(options);
+
     const obj = await super.get(objectId, options);
 
     if (obj instanceof SecureObject) {
@@ -247,14 +344,46 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     return obj;
   }
 
+  private _getResults(objects: T[] | QueryResultWithCount<T>): T[] {
+    if (Array.isArray(objects) && !this.useWithCount) {
+      return objects;
+    }
+
+    // @ts-expect-error missing TS in Parse
+    return objects.results;
+  }
+
   async find(options?: Parse.Query.FindOptions): Promise<T[]> {
+    options = this.prepareOptions(options);
     const objects = await super.find(options);
 
-    for (const obj of objects) {
-      if (obj instanceof SecureObject) {
-        await (obj as SecureObject).decrypt();
+    const maybeDecrypt = async (objs: T[]) => {
+      for (const obj of objs) {
+        if (obj instanceof SecureObject) {
+          await (obj as SecureObject).decrypt();
+        }
       }
-    }
+    };
+
+    await maybeDecrypt(this._getResults(objects));
+
+    return objects;
+  }
+
+  async findWithCount(options?: Parse.Query.FindOptions): Promise<QueryResultWithCount<T>> {
+    this.withCount(true);
+
+    const objects = (await super.find(options)) as unknown as QueryResultWithCount<T>;
+
+    const maybeDecrypt = async (objs: T[]) => {
+      for (const obj of objs) {
+        if (obj instanceof SecureObject) {
+          await (obj as SecureObject).decrypt();
+        }
+      }
+    };
+
+    await maybeDecrypt(this._getResults(objects));
 
     return objects;
   }

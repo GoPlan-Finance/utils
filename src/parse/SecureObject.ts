@@ -1,5 +1,5 @@
-import { Crypto, DerivedKey, EncryptedValue } from "../Crypto";
-import { BaseObject } from "./BaseObject";
+import { Crypto, DerivedKey, EncryptedValue } from '../Crypto';
+import { BaseObject } from './BaseObject';
 
 const perf = {
   time: 0,
@@ -42,7 +42,7 @@ export abstract class SecureObject extends BaseObject {
     }
 
     await Promise.all(
-      this.secureFields.map(async (fieldName) => {
+      this.secureFields.map(async fieldName => {
         const val = super.get(fieldName);
 
         if (val === undefined || val === null) {
@@ -78,7 +78,7 @@ export abstract class SecureObject extends BaseObject {
 
   public static async encryptField<T>(val: T): Promise<EncryptedValue> {
     if (Crypto.isEncrypted(val as unknown as EncryptedValue)) {
-      throw "Already encrypted";
+      throw 'Already encrypted';
 
       return val as unknown as EncryptedValue;
     }
@@ -147,7 +147,7 @@ export abstract class SecureObject extends BaseObject {
       return this;
     };
 
-    if (key && typeof key === "object") {
+    if (key && typeof key === 'object') {
       for (const k in key) {
         if (!Object.prototype.hasOwnProperty.call(key, k)) {
           continue;

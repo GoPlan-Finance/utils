@@ -1,5 +1,5 @@
 export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export type StringKeys<T> = Extract<keyof T, string>;
@@ -55,7 +55,7 @@ export const processBatch = async <T, U, V extends boolean | number | null | und
   return results;
 };
 
-export function PromiseWaitAllNested<T>(promises: Promise<void>[]): Promise<void> {
+export function PromiseWaitAllNested<T>(promises: Promise<T>[]): Promise<void> {
   const waitForRequests = () =>
     new Promise<void>((resolve): void => {
       const len = promises.length;

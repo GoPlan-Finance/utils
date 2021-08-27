@@ -36,7 +36,6 @@ module.exports = {
     "init-declarations": "error",
     "no-use-before-define": "error",
     "no-lonely-if": "error",
-    "no-mixed-operators": "error",
     "no-unneeded-ternary": "error",
     "no-whitespace-before-property": "error",
     "nonblock-statement-body-position": "error",

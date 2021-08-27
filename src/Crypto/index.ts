@@ -30,15 +30,15 @@ export interface DerivedKey {
 
 export class Crypto {
   static isEncrypted(value: { [key: string]: unknown }, strict = true): boolean {
-    if (typeof value !== "object" || value === undefined || value === null) {
+    if (typeof value !== 'object' || value === undefined || value === null) {
       return false;
     }
 
     const keys = {
-      ct: "string",
-      iv: "string",
-      kVer: "number",
-      aVer: "number",
+      ct: 'string',
+      iv: 'string',
+      kVer: 'number',
+      aVer: 'number',
     };
 
     // All required keys are OK
@@ -53,7 +53,7 @@ export class Crypto {
     }
 
     const kk = Object.keys(keys);
-    const extras = Object.keys(value).filter((k) => !kk.includes(k));
+    const extras = Object.keys(value).filter(k => !kk.includes(k));
 
     return extras.length === 0;
   }
@@ -84,7 +84,7 @@ export class Crypto {
       const iv = Crypto.randomIv();
       const encryptedContent = await window.crypto.subtle.encrypt(
         {
-          name: "AES-GCM",
+          name: 'AES-GCM',
           iv,
         },
         key,
@@ -98,7 +98,7 @@ export class Crypto {
         aVer: 2,
       };
     } catch (e) {
-      console.error("Crypto::encrypt() Failed", e);
+      console.error('Crypto::encrypt() Failed', e);
       throw e;
     }
   }
@@ -110,40 +110,40 @@ export class Crypto {
    */
   private static async importKey(jwk: JsonWebKey): Promise<CryptoKey> {
     return window.crypto.subtle.importKey(
-      "jwk",
+      'jwk',
       jwk,
       {
-        name: "AES-GCM",
+        name: 'AES-GCM',
       },
       false,
-      ["encrypt", "decrypt"]
+      ['encrypt', 'decrypt']
     );
   }
 
   private static async exportKey(derivedKey: CryptoKey): Promise<JsonWebKey> {
-    return await window.crypto.subtle.exportKey("jwk", derivedKey);
+    return await window.crypto.subtle.exportKey('jwk', derivedKey);
   }
 
   static async PBKDF2(masterKey: string, salt: Uint8Array): Promise<DerivedKey> {
     const key = await window.crypto.subtle.importKey(
-      "raw",
+      'raw',
       enc.encode(masterKey),
-      "PBKDF2",
+      'PBKDF2',
       false,
-      ["deriveKey"]
+      ['deriveKey']
     );
 
     const derivedKey = await window.crypto.subtle.deriveKey(
       {
-        name: "PBKDF2",
+        name: 'PBKDF2',
         salt,
         iterations: 250000,
-        hash: "SHA-256",
+        hash: 'SHA-256',
       },
       key,
-      { name: "AES-GCM", length: 256 },
+      { name: 'AES-GCM', length: 256 },
       true,
-      ["encrypt", "decrypt"]
+      ['encrypt', 'decrypt']
     );
 
     return {
@@ -162,7 +162,7 @@ export class Crypto {
     try {
       const decryptedContent = await window.crypto.subtle.decrypt(
         {
-          name: "AES-GCM",
+          name: 'AES-GCM',
           iv,
         },
         key,
@@ -171,13 +171,13 @@ export class Crypto {
 
       const decodedContent = dec.decode(decryptedContent);
 
-      if (decodedContent === undefined || decodedContent === "") {
+      if (decodedContent === undefined || decodedContent === '') {
         return undefined;
       }
 
       return JSON.parse(decodedContent);
     } catch (e) {
-      console.error("Crypto::decrypt() Failed ", e);
+      console.error('Crypto::decrypt() Failed ', e);
       throw e;
     }
   }

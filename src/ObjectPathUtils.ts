@@ -4,11 +4,11 @@
 
 export class ObjectPathUtils {
   static setPathValue<T, U>(obj: T, path: string | string[], value: U): void {
-    const a = Array.isArray(path) ? path : path.split(".");
+    const a = Array.isArray(path) ? path : path.split('.');
     let o = obj;
     while (a.length - 1) {
       const n = a.shift();
-      if (!(n in o)) {
+      if (n && !(n in o)) {
         // @ts-expect-error implicit any
         o[n] = {};
       }
@@ -19,25 +19,21 @@ export class ObjectPathUtils {
     o[a[0]] = value;
   }
 
-  static getPathValue<U, T = unknown>(
-    obj: T,
-    path: string | string[],
-    defaultVal: U = undefined
-  ): U {
-    let a = [];
+  static getPathValue<U, T = unknown>(obj: T, path: string | string[], defaultVal?: U): U {
+    let a: string[] = [];
 
     if (Array.isArray(path)) {
       a = path;
     } else {
-      path = path.replace(/\[(\w+)\]/g, ".$1");
-      path = path.replace(/^\./, "");
-      a = path.split(".");
+      path = path.replace(/\[(\w+)\]/g, '.$1');
+      path = path.replace(/^\./, '');
+      a = path.split('.');
     }
 
     let o = obj;
     while (a.length) {
       const n = a.shift();
-      if (!(n in o)) {
+      if (n && !(n in o)) {
         return defaultVal;
       }
       // @ts-expect-error implicit any

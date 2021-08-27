@@ -3,10 +3,10 @@
  *
  *
  */
-import { BaseObject } from "./BaseObject";
-import { Query } from "./Query";
+import { BaseObject } from './BaseObject';
+import { Query } from './Query';
 
-import md5 = require("md5");
+import md5 = require('md5');
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
 
@@ -17,10 +17,12 @@ export class CacheableQuery<T extends BaseObject> extends Query<T> {
   private static CACHE: unknown = {};
 
   public async findBy(
-    params: { [key: string]: string | boolean | number | BaseObject | Parse.Pointer },
+    params: {
+      [key: string]: string | boolean | number | BaseObject | Parse.Pointer;
+    },
     useMasterKey = false
   ): Promise<T[]> {
-    return this.handleCache<T[]>("findBy", arguments, () => {
+    return this.handleCache<T[]>('findBy', arguments, () => {
       return super.findBy(params, useMasterKey);
     });
   }
@@ -31,28 +33,30 @@ export class CacheableQuery<T extends BaseObject> extends Query<T> {
     },
     useMasterKey = false
   ): Promise<T | undefined> {
-    return this.handleCache<T>("findOneBy", arguments, () => {
+    return this.handleCache<T>('findOneBy', arguments, () => {
       return super.findOneBy(params, useMasterKey);
     });
   }
 
   public async findOrCreate(
-    params: { [key: string]: string | boolean | number | BaseObject | Parse.Pointer },
+    params: {
+      [key: string]: string | boolean | number | BaseObject | Parse.Pointer;
+    },
     useMasterKey = false
   ): Promise<T> {
-    return this.handleCache<T>("findOrCreate", arguments, () => {
+    return this.handleCache<T>('findOrCreate', arguments, () => {
       return super.findOrCreate(params, useMasterKey);
     });
   }
 
   public async getObjectById(docId: string, useMasterKey = false): Promise<T> {
-    return this.handleCache<T>("getObjectById", arguments, () => {
+    return this.handleCache<T>('getObjectById', arguments, () => {
       return super.getObjectById(docId, useMasterKey);
     });
   }
 
   public async getOrNull(docId: string, useMasterKey = false): Promise<T> {
-    return this.handleCache<T>("getOrNull", arguments, () => {
+    return this.handleCache<T>('getOrNull', arguments, () => {
       return super.getOrNull(docId, useMasterKey);
     });
   }
