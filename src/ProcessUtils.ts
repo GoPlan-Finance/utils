@@ -4,7 +4,7 @@ export function sleep(ms: number): Promise<void> {
 
 export type StringKeys<T> = Extract<keyof T, string>;
 
-export const processBatch = async <T, U, V extends boolean | number | null | undefined = undefined>(
+export const processBatch = async <T, U, V extends boolean | number | null | undefined | void = void>(
   data: Array<T>,
   func: (elem: T) => Promise<U>,
   statusFunc: (curIndex?: number, len?: number, result?: U) => Promise<V> | V,
