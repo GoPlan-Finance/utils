@@ -1,60 +1,59 @@
-import { padDecimals } from 'common/MathUtils';
-import { Currencies } from 'ts-money';
+import { Currencies, Money } from 'ts-money';
+import NumberFormatOptions = Intl.NumberFormatOptions;
 
 interface CurrencyInfoInterface {
   decimal_digits: number;
   symbol: string;
 }
 
-export const getCurrencyInfo = (currency: string | null): CurrencyInfoInterface => {
-  const info = {
-    decimal_digits: 2,
-    symbol: '$',
-  };
+export class CurrencyUtils {
+  public static getCurrencyInfo(currency: string | null): CurrencyInfoInterface {
+    const info = {
+      decimal_digits: 2,
+      symbol: '$',
+    };
 
-  if (!currency) {
-    return info;
+    if (!currency) {
+      return info;
+    }
+
+    currency = currency.toUpperCase();
+
+    if (!Currencies[currency as keyof typeof Currencies]) {
+      throw `Currency not found ${currency}`;
+    }
+
+    return Currencies[currency.toUpperCase() as keyof typeof Currencies];
   }
 
-  currency = currency.toUpperCase();
+  public static formatCurrency(
+    value: number,
+    currency: string,
+    fixedDecimals = true,
+    locale = 'en-US',
+    signDisplay = 'auto'
+  ): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
 
-  if (!Currencies[currency as keyof typeof Currencies]) {
-    throw `Currency not found ${currency}`;
+    if (!isNaN(Number(value))) {
+      value = Number(value);
+    }
+
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters
+    const options: NumberFormatOptions = {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 4,
+      signDisplay,
+    };
+
+    if (fixedDecimals) {
+      options.minimumFractionDigits = 2;
+    }
+
+    return new Intl.NumberFormat(locale, options).format(value);
   }
-
-  return Currencies[currency.toUpperCase() as keyof typeof Currencies];
-};
-
-export const formatCurrency = (
-  value: /*Money |*/ number,
-  currency: string,
-  fixedDecimals = true
-): string => {
-  // return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: currency }).format(value)
-
-  const currencyInfo = getCurrencyInfo(currency);
-
-  if (value === null || value === undefined) {
-    return '';
-  }
-
-  /* if (value instanceof Money) {
-   value = value.toDecimal()
-   } else */
-  if (!isNaN(Number(value))) {
-    value = Number(value);
-  }
-
-  /* cap max decimals to either currency, or 4 */
-  const valueStr = padDecimals(
-    value,
-    currencyInfo.decimal_digits,
-    fixedDecimals ? currencyInfo.decimal_digits : Math.max(currencyInfo.decimal_digits, 4)
-  );
-
-  if (['EUR', 'GBP'].includes(currency)) {
-    return `${currencyInfo.symbol} ${valueStr}`;
-  }
-
-  return `${valueStr} ${currencyInfo.symbol}`;
-};
+}

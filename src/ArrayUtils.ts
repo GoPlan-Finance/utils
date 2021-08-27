@@ -178,4 +178,8 @@ export class ArrayUtils {
       value: highestVal,
     };
   }
+
+  public static sum<T>(arr: T[], cb: (item: T) => number): number {
+    return arr.reduce((result, current) => result + cb(current), 0);
+  }
 }

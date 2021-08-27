@@ -3,18 +3,21 @@
  *
  *
  */
-import { BaseObject } from './BaseObject';
-import { Query } from './Query';
-
-import md5 = require('md5');
+import * as CryptoJS from 'crypto-js';
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prefer-rest-params */
+import { BaseObject } from './BaseObject';
+import { Constructible, PointerInterface, Query } from './Query';
 
 type CacheItemType<T> = { [key: string]: Promise<T> };
 type HandlerFn<T> = () => Promise<T>;
 
 export class CacheableQuery<T extends BaseObject> extends Query<T> {
   private static CACHE: unknown = {};
+
+  static create<U extends Parse.Object>(objectClass: Constructible<U>): CacheableQuery<U> {
+    return new CacheableQuery<U>(objectClass);
+  }
 
   public async findBy(
     params: {
@@ -27,10 +30,8 @@ export class CacheableQuery<T extends BaseObject> extends Query<T> {
     });
   }
 
-  public async findOneBy(
-    params: {
-      [key: string /* StringKeys<T>*/]: string | boolean | number | BaseObject | Parse.Pointer;
-    },
+  public async findOneBy<K extends Extract<keyof T, string>>(
+    params: Partial<Pick<T, K>> | T,
     useMasterKey = false
   ): Promise<T | undefined> {
     return this.handleCache<T>('findOneBy', arguments, () => {
@@ -38,18 +39,21 @@ export class CacheableQuery<T extends BaseObject> extends Query<T> {
     });
   }
 
-  public async findOrCreate(
-    params: {
-      [key: string]: string | boolean | number | BaseObject | Parse.Pointer;
-    },
-    useMasterKey = false
+  public async findOrCreate<K extends Extract<keyof T, string>>(
+    params: Partial<Pick<T, K>> | T,
+    useMasterKey = false,
+    save = true,
+    createParams: Partial<Pick<T, K>> | T | undefined = undefined
   ): Promise<T> {
     return this.handleCache<T>('findOrCreate', arguments, () => {
-      return super.findOrCreate(params, useMasterKey);
+      return super.findOrCreate(params, useMasterKey, save, createParams);
     });
   }
 
-  public async getObjectById(docId: string, useMasterKey = false): Promise<T> {
+  public async getObjectById(
+    docId: string | PointerInterface | T,
+    useMasterKey = false
+  ): Promise<T> {
     return this.handleCache<T>('getObjectById', arguments, () => {
       return super.getObjectById(docId, useMasterKey);
     });
@@ -68,8 +72,9 @@ export class CacheableQuery<T extends BaseObject> extends Query<T> {
   ): Promise<U> {
     const CACHE = CacheableQuery.CACHE as CacheItemType<U>;
 
-    const hash = md5(methodName + JSON.stringify(params)).toString();
+    const hash = CryptoJS.MD5(methodName + JSON.stringify(params)).toString();
 
+    /* if previous query returned null or undefined, we will do the query again */
     if (CACHE[hash]) {
       return CACHE[hash] as Promise<U>;
     }
