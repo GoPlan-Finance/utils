@@ -1,5 +1,4 @@
-import { MathUtils } from '@utils/MathUtils'
-
+import { MathUtils } from '@utils/MathUtils';
 
 export function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -55,7 +54,7 @@ export const processBatch = async <
   const threads: Promise<void>[] = [];
 
   // Do not start more threads that length of data.
-  let startQty = MathUtils.between(nbParallel , 0 , data.length)
+  let startQty = MathUtils.between(nbParallel, 0, data.length);
 
   while (--startQty >= 0) {
     threads.push(runLoop());

@@ -17,13 +17,8 @@
     "outDir": "dist",
     "baseUrl": "",
     "paths": {
-      "@utils/*": [
-        "./src/*"
-      ]
+      "@utils/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "spec/**/*.ts"
-  ]
+  "include": ["src/**/*", "spec/**/*.ts"]
 }
