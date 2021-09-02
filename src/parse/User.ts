@@ -32,8 +32,6 @@ export class User extends Parse.User {
   }
 
   public static register(): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error  error TS2339: Property 'className' does not exist on type 'typeof BaseObject'.
     Parse.Object.registerSubclass(this.className, this);
   }
 }

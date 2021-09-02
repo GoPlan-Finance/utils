@@ -196,13 +196,13 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     return subscription;
   }
 
-  public async getOrNull(docId: string, useMasterKey = false): Promise<T> {
+  public async getOrNull(docId: string, useMasterKey: boolean = undefined): Promise<T> {
     return this.get(docId, this.prepareOptions({}, useMasterKey));
   }
 
   public async getObjectById(
     objectOrId: string | PointerInterface | T,
-    useMasterKey = false
+    useMasterKey: boolean = undefined
   ): Promise<T> {
     let docId = null;
 
@@ -234,7 +234,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
     params: {
       [key: string]: string | boolean | number | Parse.Object | Parse.Pointer;
     },
-    useMasterKey = false
+    useMasterKey: boolean = undefined
   ): Promise<T[]> {
     for (const [k, v] of Object.entries(params)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -247,7 +247,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   public async findOneBy<K extends Extract<keyof T, string>>(
     params: Partial<Pick<T, K>> | T,
-    useMasterKey = false
+    useMasterKey: boolean = undefined
   ): Promise<T | undefined> {
     const options = this.prepareOptions({}, useMasterKey);
 
@@ -274,7 +274,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   public async findOrCreate<K extends Extract<keyof T, string>>(
     params: Partial<Pick<T, K>> | T,
-    useMasterKey = false,
+    useMasterKey: boolean = undefined,
     save = true,
     createParams: Partial<Pick<T, K>> | T | undefined = undefined
   ): Promise<T> {
@@ -311,7 +311,7 @@ export class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   private prepareOptions(
     options: Parse.FullOptions | undefined,
-    useMasterKey?: boolean
+    useMasterKey: boolean = undefined
   ): Parse.FullOptions {
     if (!options) {
       options = {} as Parse.FullOptions;
