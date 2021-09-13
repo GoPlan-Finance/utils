@@ -34,6 +34,18 @@ export class BaseObject extends Parse.Object {
     return this.get('updatedAt');
   }
 
+  static fromJSON<R>(objectClass: { className: string }, json: any, override?: boolean): R {
+    const object = super.fromJSON(
+      {
+        className: objectClass.className,
+        ...json,
+      },
+      override
+    );
+
+    return object as unknown as R;
+  }
+
   public static register(): void {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore  error TS2339: Property 'className' does not exist on type 'typeof BaseObject'.
