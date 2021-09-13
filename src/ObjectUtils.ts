@@ -37,4 +37,8 @@ export class ObjectUtils {
   static deepClone<T>(object: T): T {
     return JSON.parse(JSON.stringify(object));
   }
+
+  static deepEquals<T, U>(a: T, b: T): boolean {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
 }
