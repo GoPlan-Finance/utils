@@ -19,8 +19,13 @@
     "declaration": true,
     "strict": false,
     "paths": {
-      "@utils/*": ["./src/*"]
+      "@utils/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["src/**/*", "spec/**/*.ts"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": ["./dist"]
 }

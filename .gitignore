@@ -5,3 +5,4 @@ node_modules/
 /.eslintcache
 /.idea/workspace.xml
 /dist
+/yarn.lock
