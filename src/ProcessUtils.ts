@@ -1,4 +1,4 @@
-import { MathUtils } from '@utils/MathUtils';
+import { MathUtils } from './MathUtils';
 
 export function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));

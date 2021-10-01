@@ -7,7 +7,7 @@
 // import Parse from 'parse'
 
 /*abstract*/
-import { PointerInterface } from '@utils/parse/Query';
+import { PointerInterface } from './Query';
 
 export class BaseObject extends Parse.Object {
   // get  () : string{

@@ -16,9 +16,11 @@
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": "",
+    "declaration": true,
+    "strict": false,
     "paths": {
       "@utils/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*", "spec/**/*.ts"]
+  "include": ["src/**/*", "spec/**/*.ts"],
 }

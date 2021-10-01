@@ -3,7 +3,7 @@
  *
  *
  */
-import { User } from '@utils/parse/User';
+import { User } from './User';
 import { Mutex } from 'async-mutex';
 
 import { BaseObject } from './BaseObject';
