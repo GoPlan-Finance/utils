@@ -9,8 +9,8 @@
     "stock-market",
     "dashboard"
   ],
-  "author": "NewEra Systems",
-  "private": true,
+  "author": "GoPlan Finance Team",
+  "license" : "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/GoPlan-Finance/utils"
   },
