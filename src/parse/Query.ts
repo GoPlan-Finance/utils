@@ -33,7 +33,7 @@ interface QueryResultWithCount<T> {
   count: number;
 }
 
-export class Query<T extends Parse.Object> extends Parse.Query<T> {
+export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
   private useWithCount = false;
   private sessionToken: string = null;
