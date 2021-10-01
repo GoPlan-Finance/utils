@@ -31,7 +31,7 @@ export class CurrencyUtils {
     currency: string,
     fixedDecimals = true,
     locale = 'en-US',
-    signDisplay = 'auto'
+    signDisplay: "auto" | "never" | "always" | undefined
   ): string {
     if (value === null || value === undefined) {
       return '';
