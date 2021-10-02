@@ -1,5 +1,4 @@
 import { Currencies, Money } from 'ts-money';
-import NumberFormatOptions = Intl.NumberFormatOptions;
 
 interface CurrencyInfoInterface {
   decimal_digits: number;
@@ -31,7 +30,7 @@ export class CurrencyUtils {
     currency: string,
     fixedDecimals = true,
     locale = 'en-US',
-    signDisplay: "auto" | "never" | "always" | undefined
+    signDisplay: 'auto' | 'never' | 'always' | undefined
   ): string {
     if (value === null || value === undefined) {
       return '';
@@ -42,7 +41,7 @@ export class CurrencyUtils {
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters
-    const options: NumberFormatOptions = {
+    const options: Intl.NumberFormatOptions = {
       style: 'currency',
       currency,
       minimumFractionDigits: 0,

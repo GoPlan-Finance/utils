@@ -3,7 +3,7 @@
  *
  *
  */
-import { User } from '@utils/parse/User';
+import { User } from './User';
 import { Mutex } from 'async-mutex';
 
 import { BaseObject } from './BaseObject';
@@ -33,7 +33,7 @@ interface QueryResultWithCount<T> {
   count: number;
 }
 
-export class Query<T extends Parse.Object> extends Parse.Query<T> {
+export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
   private useWithCount = false;
   private sessionToken: string = null;

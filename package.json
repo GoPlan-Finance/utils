@@ -1,6 +1,6 @@
 {
   "name": "@goplan-finance/utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "keywords": [
     "finance",
@@ -10,30 +10,37 @@
     "dashboard"
   ],
   "author": "GoPlan Finance Team",
-  "license" : "AGPL-3.0-only",
+  "license": "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/GoPlan-Finance/utils"
   },
   "repository": "https://github.com/GoPlan-Finance/utils",
   "homepage": "https://github.com/GoPlan-Finance/utils",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepublish": "yarn run test",
     "pre-commit": "yarn run lint && yarn run prettier",
     "lint": "eslint --cache --fix . --ext .js,.ts,.vue",
     "prettier": "prettier --write  src/ spec/",
     "test": "jest"
   },
-  "exports": {
-    "./": "./src/"
-  },
   "pre-commit": "pre-commit",
   "dependencies": {
     "async-mutex": "^0.3.1",
+    "axios": "^0.22.0",
+    "crypto-js": "^4.1.1",
     "parse": "^3.2.0",
     "prettier": "^2.3.2",
+    "ts-money": "^0.4.6",
     "ts-node": "^10.1.0",
     "typescript": "^4.4.3"
   },
   "devDependencies": {
+    "@types/bson": "^4.2.0",
+    "@types/crypto-js": "^4.0.2",
     "@types/jest": "^26.0.24",
     "@types/node": "^14.17.2",
     "@types/parse": "^2.18.6",
