@@ -17,7 +17,7 @@ import { CacheableQuery } from './parse/CacheableQuery';
 import Query, * as QueryUtils from './parse/Query';
 import { SecureObject } from './parse/SecureObject';
 import { User } from './parse/User';
-import * as  CryptoUtils from './crypto';
+import * as CryptoUtils from './crypto';
 
 export {
   ArrayUtils,
