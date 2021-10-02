@@ -32,6 +32,7 @@ export class CurrencyUtils {
     locale = 'en-US',
     signDisplay: 'auto' | 'never' | 'always' | undefined
   ): string {
+
     if (value === null || value === undefined) {
       return '';
     }

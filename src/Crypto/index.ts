@@ -12,7 +12,7 @@ export interface EncryptedValue {
   kVer: number;
   aVer: number;
 
-  [Crypto: string]: string | number;
+  [index: string]: string | number;
 }
 
 export interface EncryptedKey extends EncryptedValue {
@@ -59,14 +59,12 @@ export class Crypto {
   }
 
   static buffToStr(buff: Uint8Array): string {
-    const string = new TextDecoder().decode(buff);
-    return btoa(string);
+    console.log(buff)
+    return btoa(String.fromCharCode.apply(null, buff));
   }
 
   static strToBuff(b64: string): Uint8Array {
-    const uint8array = new TextEncoder().encode(atob(b64));
-
-    return uint8array;
+    return Uint8Array.from(atob(b64), c => c.charCodeAt(null));
   }
 
   public static randomSalt(): Uint8Array {
@@ -151,10 +149,7 @@ export class Crypto {
     };
   }
 
-  static async decrypt<T>(
-    derivedKey: DerivedKey,
-    cypherObject: EncryptedValue
-  ): Promise<T | undefined> {
+  static async decrypt<T>(derivedKey: DerivedKey, cypherObject: EncryptedValue): Promise<T> {
     const key = await Crypto.importKey(derivedKey.PBKDF2);
     const iv = Crypto.strToBuff(cypherObject.iv);
     const data = Crypto.strToBuff(cypherObject.ct);
@@ -172,7 +167,7 @@ export class Crypto {
       const decodedContent = dec.decode(decryptedContent);
 
       if (decodedContent === undefined || decodedContent === '') {
-        return undefined;
+        return null;
       }
 
       return JSON.parse(decodedContent);
