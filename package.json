@@ -20,6 +20,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "prepare": "tsc",
     "watch": "tsc --watch",
     "prepublish": "yarn run test",
     "pre-commit": "yarn run lint && yarn run prettier",
