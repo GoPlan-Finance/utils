@@ -28,7 +28,7 @@ export interface DerivedKey {
   PBKDF2: JsonWebKey;
 }
 
-export class Crypto {
+export default class Crypto {
   static isEncrypted(value: { [key: string]: unknown }, strict = true): boolean {
     if (typeof value !== 'object' || value === undefined || value === null) {
       return false;

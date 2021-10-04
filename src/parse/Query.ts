@@ -69,7 +69,7 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
     return this;
   }
 
-  public  includeAll(): this {
+  public includeAll(): this {
     return super.includeAll() as this;
   }
 

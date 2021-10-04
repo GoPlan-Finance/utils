@@ -1,4 +1,4 @@
-import { Crypto, DerivedKey, EncryptedValue } from '../Crypto';
+import { Crypto, CryptoUtils } from '../index';
 import { BaseObject } from './BaseObject';
 
 const perf = {
@@ -8,7 +8,7 @@ const perf = {
 
 export abstract class SecureObject extends BaseObject {
   private static isServer = false;
-  private static sessionDerivedKey: DerivedKey;
+  private static sessionDerivedKey: CryptoUtils.DerivedKey;
   private readonly secureFields: string[] = [];
 
   private _decryptedReadCache: { [key: string]: unknown } = {};
@@ -24,7 +24,7 @@ export abstract class SecureObject extends BaseObject {
     this.secureFields = secureFields;
   }
 
-  static setSessionDerivedKey(derived: DerivedKey): void {
+  static setSessionDerivedKey(derived: CryptoUtils.DerivedKey): void {
     SecureObject.sessionDerivedKey = derived;
   }
 
@@ -66,7 +66,7 @@ export abstract class SecureObject extends BaseObject {
     return clone;
   }
 
-  public static async decryptField<T>(val: EncryptedValue): Promise<T | undefined> {
+  public static async decryptField<T>(val: CryptoUtils.EncryptedValue): Promise<T | undefined> {
     const start = window.performance.now();
 
     const decrypted = await Crypto.decrypt<T>(SecureObject.sessionDerivedKey, val);
@@ -76,11 +76,11 @@ export abstract class SecureObject extends BaseObject {
     return decrypted;
   }
 
-  public static async encryptField<T>(val: T): Promise<EncryptedValue> {
-    if (Crypto.isEncrypted(val as unknown as EncryptedValue)) {
+  public static async encryptField<T>(val: T): Promise<CryptoUtils.EncryptedValue> {
+    if (Crypto.isEncrypted(val as unknown as CryptoUtils.EncryptedValue)) {
       throw 'Already encrypted';
 
-      return val as unknown as EncryptedValue;
+      return val as unknown as CryptoUtils.EncryptedValue;
     }
 
     if (val instanceof Parse.Object) {
