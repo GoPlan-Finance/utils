@@ -69,6 +69,10 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
     return this;
   }
 
+  public  includeAll(): this {
+    return super.includeAll() as this;
+  }
+
   static whereQueries<U extends Parse.Object>(
     handler: 'and' | 'or' | 'nor',
     queries: Array<Query<U>>
