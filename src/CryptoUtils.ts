@@ -59,7 +59,6 @@ export default class Crypto {
   }
 
   static buffToStr(buff: Uint8Array): string {
-    console.log(buff);
     return btoa(String.fromCharCode.apply(null, buff));
   }
 

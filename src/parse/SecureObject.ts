@@ -6,12 +6,15 @@ const perf = {
   ops: 0,
 };
 
+type ReadCacheType = Record<string, unknown>;
+
 export abstract class SecureObject extends BaseObject {
   private static isServer = false;
   private static sessionDerivedKey: CryptoUtils.DerivedKey;
   private readonly secureFields: string[] = [];
 
-  private _decryptedReadCache: { [key: string]: unknown } = {};
+  private _decryptPromise: Promise<void> = null;
+  private _decryptedReadCache: ReadCacheType = {};
   private _dirtyCache: { [key: string]: boolean } = {};
 
   public static setServerMode(): void {
@@ -32,7 +35,14 @@ export abstract class SecureObject extends BaseObject {
     return this.secureFields;
   }
 
-  public async decrypt(): Promise<void> {
+  public async decrypt(force = false): Promise<void> {
+    if (force || this._decryptPromise === null) {
+      this._decryptPromise = this.doDecrypt();
+    }
+    return this._decryptPromise;
+  }
+
+  private async doDecrypt(): Promise<void> {
     if (SecureObject.isServer) {
       return;
     }
@@ -40,6 +50,8 @@ export abstract class SecureObject extends BaseObject {
     if (!SecureObject.sessionDerivedKey) {
       throw 'Encryption key not set"';
     }
+
+    const _decryptedReadCache: ReadCacheType = {};
 
     await Promise.all(
       this.secureFields.map(async fieldName => {
@@ -50,11 +62,13 @@ export abstract class SecureObject extends BaseObject {
         }
 
         this._dirtyCache[fieldName] = false;
-        this._decryptedReadCache[fieldName] = Crypto.isEncrypted(val)
+        _decryptedReadCache[fieldName] = Crypto.isEncrypted(val)
           ? await SecureObject.decryptField(val)
           : val;
       })
     );
+
+    this._decryptedReadCache = _decryptedReadCache;
   }
 
   clone(): this {

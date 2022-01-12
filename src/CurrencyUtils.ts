@@ -46,7 +46,7 @@ export class CurrencyUtils {
       currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 4,
-      signDisplay,
+      // signDisplay,
     };
 
     if (fixedDecimals) {

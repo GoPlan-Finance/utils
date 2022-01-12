@@ -8,6 +8,7 @@ import { Mutex } from 'async-mutex';
 
 import { BaseObject } from './BaseObject';
 import { SecureObject } from './SecureObject';
+import { ObjectPathUtils } from '../ObjectPathUtils';
 
 export type LiveQueryUpdateFnEventType =
   | null
@@ -21,6 +22,7 @@ export type LiveQueryUpdateFnEventType =
 
 export type LiveQueryUpdateFn<T> = (obj: T, event: LiveQueryUpdateFnEventType) => void;
 export type Constructible<T> = new (...args: unknown[]) => T;
+type AttributeList<T> = Extract<keyof T, string>[];
 
 export interface PointerInterface {
   __type: string | 'Pointer';
@@ -36,6 +38,7 @@ interface QueryResultWithCount<T> {
 export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
   private useWithCount = false;
+  private useInclude: AttributeList<T> = [];
   private sessionToken: string = null;
 
   // objectClass : Constructible<T>
@@ -71,6 +74,21 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   public includeAll(): this {
     return super.includeAll() as this;
+  }
+
+  // public include<K extends keyof T["attributes"] | keyof BaseAttributes>(...key: K[]): this {
+  //
+  // }
+
+  public include<K extends Extract<keyof T, string>>(key: K | K[]): this {
+    // @ts-expect-error simplified type
+    super.include(key);
+    if (!Array.isArray(key)) {
+      key = [key];
+    }
+
+    this.useInclude.push(...key);
+    return this;
   }
 
   static whereQueries<U extends Parse.Object>(
@@ -155,8 +173,8 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
       }
     };
 
-    if (objects) {
-      const tmpObjects: T[] = this._getResults(await this.find());
+    if (Array.isArray(objects)) {
+      const tmpObjects: T[] = await this.maybeDecrypt(this._getResults(await this.find()));
 
       if (updateFn) {
         for (const object of tmpObjects) {
@@ -355,19 +373,34 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
     return objects.results;
   }
 
+  private async maybeDecrypt(objs: T[]): Promise<T[]> {
+    const queue: Promise<void>[] = [];
+
+    for (const obj of objs) {
+      if (obj instanceof SecureObject) {
+        queue.push((obj as SecureObject).decrypt());
+      }
+
+      // Prepare nested include
+      for (const includeName of this.useInclude) {
+        const inclObject = ObjectPathUtils.getPathValue(obj, includeName);
+
+        if (inclObject instanceof SecureObject) {
+          queue.push(inclObject.decrypt());
+        }
+      }
+    }
+
+    await Promise.all(queue);
+
+    return objs;
+  }
+
   async find(options?: Parse.Query.FindOptions): Promise<T[]> {
     options = this.prepareOptions(options);
     const objects = await super.find(options);
 
-    const maybeDecrypt = async (objs: T[]) => {
-      for (const obj of objs) {
-        if (obj instanceof SecureObject) {
-          await (obj as SecureObject).decrypt();
-        }
-      }
-    };
-
-    await maybeDecrypt(this._getResults(objects));
+    await this.maybeDecrypt(this._getResults(objects));
 
     return objects;
   }
@@ -377,15 +410,7 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
 
     const objects = (await super.find(options)) as unknown as QueryResultWithCount<T>;
 
-    const maybeDecrypt = async (objs: T[]) => {
-      for (const obj of objs) {
-        if (obj instanceof SecureObject) {
-          await (obj as SecureObject).decrypt();
-        }
-      }
-    };
-
-    await maybeDecrypt(this._getResults(objects));
+    await this.maybeDecrypt(this._getResults(objects));
 
     return objects;
   }
