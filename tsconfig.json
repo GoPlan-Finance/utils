@@ -11,10 +11,13 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "ESNext",
+    "rootDir": "./src/",
+    "removeComments": false,
+    "inlineSources": false,
     "noImplicitAny": true,
     "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "dist",
+    "sourceMap": false,
+    "outDir": "./dist/",
     "baseUrl": "",
     "declaration": true,
     "strict": false,
@@ -27,5 +30,8 @@
   "include": [
     "src/**/*"
   ],
-  "exclude": ["./dist"]
+  "exclude": [
+    "./dist",
+    "node_modules"
+  ]
 }
