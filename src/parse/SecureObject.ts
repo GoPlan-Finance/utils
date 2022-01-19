@@ -104,10 +104,7 @@ export abstract class SecureObject extends BaseObject {
     return await Crypto.encrypt(SecureObject.sessionDerivedKey, val);
   }
 
-  async save(
-    target: SecureObject | Array<SecureObject | Parse.File> | undefined = undefined,
-    options: Parse.RequestOptions | undefined = undefined
-  ): Promise<this> {
+  private async encryptFields(): Promise<void> {
     for (const [fieldName, isDirty] of Object.entries(this._dirtyCache)) {
       if (!isDirty) {
         continue;
@@ -117,10 +114,28 @@ export abstract class SecureObject extends BaseObject {
 
       super.set(fieldName, await SecureObject.encryptField(value));
     }
+  }
 
-    const savedObject = await super.save(target, options);
+  async save(
+    target: SecureObject | Array<SecureObject | Parse.File> | undefined = undefined,
+    options: Parse.RequestOptions | undefined = undefined
+  ): Promise<this> {
+    await this.encryptFields();
 
-    return savedObject;
+    return await super.save(target, options);
+  }
+
+  static async saveAll<T extends readonly BaseObject[]>(
+    list: T,
+    options?: Parse.Object.SaveAllOptions
+  ): Promise<T> {
+    for (const obj of list) {
+      if (obj instanceof SecureObject) {
+        await obj.encryptFields();
+      }
+    }
+
+    return await BaseObject.saveAll(list, options);
   }
 
   public get<T>(attr: string): T {
