@@ -1,7 +1,7 @@
 import axios, { CancelTokenSource } from 'axios';
 
 export class AxiosUtils {
-  public static axiosGetRequestWithAbortFactory() {
+  public static axiosGetRequestWithAbortFactory(): (url: string) => unknown {
     // eslint-disable-next-line init-declarations
     let call: CancelTokenSource = null;
     return (url: string) => {
