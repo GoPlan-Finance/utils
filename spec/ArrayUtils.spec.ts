@@ -35,6 +35,11 @@ describe('ArrayUtils', () => {
   });
 
   describe('moveIndex', () => {
+    it('should return original object if index not found', function () {
+      const val = ArrayUtils.moveIndex([1, 2, 3, 4], 0, a => false);
+      expect(val).toStrictEqual([1, 2, 3, 4]);
+    });
+
     it('should move the first to the desired position', function () {
       const val = ArrayUtils.moveIndex([1, 2, 3, 4], 0, a => a === 1);
       expect(val).toStrictEqual([1, 2, 3, 4]);
