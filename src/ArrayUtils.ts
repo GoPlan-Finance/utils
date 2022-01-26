@@ -95,6 +95,26 @@ export class ArrayUtils {
     });
   }
 
+  /**
+   * Find an array element using filterFn, and move it to finalPosition index.
+   * @param original
+   * @param finalPosition
+   * @param filterFn
+   */
+  static moveIndex<T>(original: T[], finalPosition: number, filterFn: (a: T) => boolean): T[] {
+    const index = original.findIndex(filterFn);
+
+    if (index === -1) {
+      return original;
+    }
+
+    const tmp = original.splice(index, 1);
+
+    original.splice(finalPosition, 0, ...tmp);
+
+    return original;
+  }
+
   static toKeyValueArray<T, V>(
     objects: T[],
     key: keyof T,

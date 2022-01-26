@@ -34,6 +34,47 @@ describe('ArrayUtils', () => {
     });
   });
 
+  describe('moveIndex', () => {
+    it('should move the first to the desired position', function () {
+      const val = ArrayUtils.moveIndex([1, 2, 3, 4], 0, a => a === 1);
+      expect(val).toStrictEqual([1, 2, 3, 4]);
+
+      const val2 = ArrayUtils.moveIndex([1, 2, 3, 4], 1, a => a === 1);
+      expect(val2).toStrictEqual([2, 1, 3, 4]);
+
+      const val3 = ArrayUtils.moveIndex([1, 2, 3, 4], 2, a => a === 1);
+      expect(val3).toStrictEqual([2, 3, 1, 4]);
+
+      const val4 = ArrayUtils.moveIndex([1, 2, 3, 4], 3, a => a === 1);
+      expect(val4).toStrictEqual([2, 3, 4, 1]);
+    });
+
+    it('should move the last to the desired position', function () {
+      const val = ArrayUtils.moveIndex([1, 2, 3, 4], 3, a => a === 4);
+      expect(val).toStrictEqual([1, 2, 3, 4]);
+
+      const val2 = ArrayUtils.moveIndex([1, 2, 3, 4], 2, a => a === 4);
+      expect(val2).toStrictEqual([1, 2, 4, 3]);
+
+      const val3 = ArrayUtils.moveIndex([1, 2, 3, 4], 1, a => a === 4);
+      expect(val3).toStrictEqual([1, 4, 2, 3]);
+
+      const val4 = ArrayUtils.moveIndex([1, 2, 3, 4], 0, a => a === 4);
+      expect(val4).toStrictEqual([4, 1, 2, 3]);
+    });
+
+    it('should move the middle element to the desired position', function () {
+      const val = ArrayUtils.moveIndex([1, 2, 3], 1, a => a === 2);
+      expect(val).toStrictEqual([1, 2, 3]);
+
+      const val2 = ArrayUtils.moveIndex([1, 2, 3], 0, a => a === 2);
+      expect(val2).toStrictEqual([2, 1, 3]);
+
+      const val3 = ArrayUtils.moveIndex([1, 2, 3], 2, a => a === 2);
+      expect(val3).toStrictEqual([1, 3, 2]);
+    });
+  });
+
   describe('intersect', () => {
     it('should return matching elements in two arrays', function () {
       expect(ArrayUtils.intersect([1, 2, 3], [3, 4, 5, 2])).toStrictEqual([2, 3]);
