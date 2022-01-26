@@ -22,7 +22,8 @@ export type LiveQueryUpdateFnEventType =
 
 export type LiveQueryUpdateFn<T> = (obj: T, event: LiveQueryUpdateFnEventType) => void;
 export type Constructible<T> = new (...args: unknown[]) => T;
-type AttributeList<T> = Extract<keyof T, string>[];
+type QueryAttribute<T> = Extract<keyof T, string> | string;
+type QueryAttributes<T> = QueryAttribute<T>[];
 
 export interface PointerInterface {
   __type: string | 'Pointer';
@@ -38,7 +39,7 @@ interface QueryResultWithCount<T> {
 export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
   private useWithCount = false;
-  private useInclude: AttributeList<T> = [];
+  private useInclude: QueryAttributes<T> = [];
   private sessionToken: string = null;
 
   // objectClass : Constructible<T>
@@ -76,11 +77,7 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
     return super.includeAll() as this;
   }
 
-  // public include<K extends keyof T["attributes"] | keyof BaseAttributes>(...key: K[]): this {
-  //
-  // }
-
-  public include<K extends Extract<keyof T, string>>(key: K | K[]): this {
+  public include(key: QueryAttribute<T> | QueryAttributes<T>): this {
     // @ts-expect-error simplified type
     super.include(key);
     if (!Array.isArray(key)) {
