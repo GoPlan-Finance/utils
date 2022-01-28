@@ -104,23 +104,41 @@ export abstract class SecureObject extends BaseObject {
     return await Crypto.encrypt(SecureObject.sessionDerivedKey, val);
   }
 
+  private async doEncryptFields(): Promise<void> {
+    await Promise.all(
+      Object.entries(this._dirtyCache).map(async ([fieldName, isDirty]) => {
+        if (!isDirty) {
+          return;
+        }
+
+        const value = this._decryptedReadCache[fieldName];
+        super.set(fieldName, await SecureObject.encryptField(value));
+      })
+    );
+  }
+
   async save(
     target: SecureObject | Array<SecureObject | Parse.File> | undefined = undefined,
     options: Parse.RequestOptions | undefined = undefined
   ): Promise<this> {
-    for (const [fieldName, isDirty] of Object.entries(this._dirtyCache)) {
-      if (!isDirty) {
-        continue;
-      }
+    await this.doEncryptFields();
 
-      const value = this._decryptedReadCache[fieldName];
+    return await super.save(target, options);
+  }
 
-      super.set(fieldName, await SecureObject.encryptField(value));
-    }
+  static async saveAll<T extends readonly BaseObject[]>(
+    list: T,
+    options?: Parse.Object.SaveAllOptions
+  ): Promise<T> {
+    await Promise.all(
+      list.map(async obj => {
+        if (obj instanceof SecureObject) {
+          await obj.doEncryptFields();
+        }
+      })
+    );
 
-    const savedObject = await super.save(target, options);
-
-    return savedObject;
+    return await BaseObject.saveAll(list, options);
   }
 
   public get<T>(attr: string): T {
