@@ -51,7 +51,7 @@
     "@types/parse": "2.18.13",
     "@typescript-eslint/eslint-plugin": "5.12.1",
     "@typescript-eslint/parser": "5.12.1",
-    "eslint": "8.9.0",
+    "eslint": "8.10.0",
     "eslint-plugin-varspacing": "1.2.2",
     "eslint-plugin-vue": "8.5.0",
     "jest": "27.5.1",
