@@ -109,6 +109,28 @@ describe('ArrayUtils', () => {
     });
   });
 
+  describe('toKeyValueArray', () => {
+    it('should return matching elements grouped by keys', function () {
+      const data = [
+        { color: 'blue', n: 1 },
+        { color: 'blue', n: 2 },
+        { color: 'red', n: 3 },
+        { color: 'red', n: 4 },
+        { color: 'yellow', n: 5 },
+      ];
+
+      const result = ArrayUtils.toKeyValueArray(
+        data,
+        item => item.color,
+        item => item
+      );
+      expect(result).toMatchSnapshot();
+
+      const result2 = ArrayUtils.toKeyValueArray(data, 'color', 'n');
+      expect(result2).toMatchSnapshot();
+    });
+  });
+
   describe('batches', () => {
     it('should return matching elements grouped by batch number', function () {
       const arr = Array.from(Array(100).keys());
