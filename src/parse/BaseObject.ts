@@ -7,7 +7,7 @@
 // import Parse from 'parse'
 
 /*abstract*/
-import { PointerInterface } from '@utils/parse/Query';
+import { PointerInterface } from './Query';
 
 export class BaseObject extends Parse.Object {
   // get  () : string{
@@ -32,6 +32,18 @@ export class BaseObject extends Parse.Object {
 
   get updatedAt(): Date {
     return this.get('updatedAt');
+  }
+
+  static fromJSON<R, O>(objectClass: { className: string }, json: O, override?: boolean): R {
+    const object = super.fromJSON(
+      {
+        className: objectClass.className,
+        ...json,
+      },
+      override
+    );
+
+    return object as unknown as R;
   }
 
   public static register(): void {

@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { ObjectPathUtils } from '@utils/ObjectPathUtils';
+import { ObjectPathUtils } from './ObjectPathUtils';
 
 type groupByFn<T, K> = (value: T, index: number) => K;
 
@@ -95,17 +95,43 @@ export class ArrayUtils {
     });
   }
 
+  /**
+   * Find an array element using filterFn, and move it to finalPosition index.
+   * @param original
+   * @param finalPosition
+   * @param filterFn
+   */
+  static moveIndex<T>(original: T[], finalPosition: number, filterFn: (a: T) => boolean): T[] {
+    const index = original.findIndex(filterFn);
+
+    if (index === -1) {
+      return original;
+    }
+
+    const tmp = original.splice(index, 1);
+
+    original.splice(finalPosition, 0, ...tmp);
+
+    return original;
+  }
+
   static toKeyValueArray<T, V>(
     objects: T[],
-    key: keyof T,
-    valueKey: ((elem: T) => V) | keyof T
+    keyName: keyof T | ((elem: T) => string | number),
+    valueKey: keyof T | ((elem: T) => V)
   ): { [key: string]: V } {
     const out: { [key: string]: V } = {};
 
     for (const object of objects) {
-      const keyVal = object[key] as unknown as string;
       // noinspection UnnecessaryLocalVariableJS
+      let keyVal: string | number = null;
+      if (typeof keyName === 'function') {
+        keyVal = keyName(object);
+      } else {
+        keyVal = object[keyName] as unknown as string | number;
+      }
 
+      // noinspection UnnecessaryLocalVariableJS
       let value = null;
       if (typeof valueKey === 'function') {
         value = valueKey(object);

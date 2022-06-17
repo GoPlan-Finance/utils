@@ -10,15 +10,29 @@
     "module": "CommonJS",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
+    "target": "ES6",
+    "lib": ["ES2021", "DOM"],
+    "rootDir": "./src/",
+    "removeComments": false,
+    "inlineSources": false,
     "noImplicitAny": true,
     "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "dist",
+    "sourceMap": false,
+    "outDir": "./dist/",
     "baseUrl": "",
+    "declaration": true,
+    "strict": false,
     "paths": {
-      "@utils/*": ["./src/*"]
+      "@utils/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["src/**/*", "spec/**/*.ts"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "./dist",
+    "node_modules"
+  ]
 }

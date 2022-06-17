@@ -402,3 +402,28 @@ Object {
   ],
 }
 `;
+
+exports[`ArrayUtils toKeyValueArray should return matching elements grouped by keys 1`] = `
+Object {
+  "blue": Object {
+    "color": "blue",
+    "n": 2,
+  },
+  "red": Object {
+    "color": "red",
+    "n": 4,
+  },
+  "yellow": Object {
+    "color": "yellow",
+    "n": 5,
+  },
+}
+`;
+
+exports[`ArrayUtils toKeyValueArray should return matching elements grouped by keys 2`] = `
+Object {
+  "blue": 2,
+  "red": 4,
+  "yellow": 5,
+}
+`;

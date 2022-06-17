@@ -4,3 +4,5 @@ node_modules/
 *.bak
 /.eslintcache
 /.idea/workspace.xml
+/dist
+/yarn.lock
