@@ -46,7 +46,7 @@ module.exports = {
     'prefer-const': 'error',
     'prefer-template': 'error',
   },
-  ignorePatterns: ["dist/"],
+  ignorePatterns: ['dist/'],
   globals: {
     Parse: true,
   },

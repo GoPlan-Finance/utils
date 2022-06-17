@@ -23,16 +23,9 @@
     "declaration": true,
     "strict": false,
     "paths": {
-      "@utils/*": [
-        "./src/*"
-      ]
+      "@utils/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "./dist",
-    "node_modules"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["./dist", "node_modules"]
 }
