@@ -3,7 +3,7 @@
  * https://jestjs.io/docs/configuration
  */
 
-const { pathsToModuleNameMapper } = require('ts-jest/utils');
+const { pathsToModuleNameMapper } = require('ts-jest');
 const tsConfigFile = require('./tsconfig');
 
 export default {
