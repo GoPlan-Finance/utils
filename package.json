@@ -47,7 +47,7 @@
     "@types/bson": "4.2.0",
     "@types/crypto-js": "4.1.1",
     "@types/jest": "28.1.8",
-    "@types/node": "16.11.65",
+    "@types/node": "16.11.66",
     "@types/parse": "2.18.18",
     "@typescript-eslint/eslint-plugin": "5.40.0",
     "@typescript-eslint/parser": "5.40.0",
