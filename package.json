@@ -56,6 +56,6 @@
     "eslint-plugin-vue": "9.8.0",
     "jest": "29.3.1",
     "pre-commit": "1.2.2",
-    "ts-jest": "29.0.3"
+    "ts-jest": "29.0.4"
   }
 }
