@@ -89,7 +89,7 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   limit(n: number): this {
-    super.limit(n)
+    super.limit(n);
     return this;
   }
 
