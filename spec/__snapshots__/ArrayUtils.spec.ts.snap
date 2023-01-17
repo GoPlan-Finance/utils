@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ArrayUtils batches should return a single batch when perChunk is bigger than len 1`] = `
-Array [
-  Array [
+[
+  [
     0,
     1,
     2,
@@ -107,11 +107,11 @@ Array [
 ]
 `;
 
-exports[`ArrayUtils batches should return an empty array when no data is given 1`] = `Array []`;
+exports[`ArrayUtils batches should return an empty array when no data is given 1`] = `[]`;
 
 exports[`ArrayUtils batches should return matching elements grouped by batch number 1`] = `
-Array [
-  Array [
+[
+  [
     0,
     1,
     2,
@@ -123,7 +123,7 @@ Array [
     8,
     9,
   ],
-  Array [
+  [
     10,
     11,
     12,
@@ -135,7 +135,7 @@ Array [
     18,
     19,
   ],
-  Array [
+  [
     20,
     21,
     22,
@@ -147,7 +147,7 @@ Array [
     28,
     29,
   ],
-  Array [
+  [
     30,
     31,
     32,
@@ -159,7 +159,7 @@ Array [
     38,
     39,
   ],
-  Array [
+  [
     40,
     41,
     42,
@@ -171,7 +171,7 @@ Array [
     48,
     49,
   ],
-  Array [
+  [
     50,
     51,
     52,
@@ -183,7 +183,7 @@ Array [
     58,
     59,
   ],
-  Array [
+  [
     60,
     61,
     62,
@@ -195,7 +195,7 @@ Array [
     68,
     69,
   ],
-  Array [
+  [
     70,
     71,
     72,
@@ -207,7 +207,7 @@ Array [
     78,
     79,
   ],
-  Array [
+  [
     80,
     81,
     82,
@@ -219,7 +219,7 @@ Array [
     88,
     89,
   ],
-  Array [
+  [
     90,
     91,
     92,
@@ -235,8 +235,8 @@ Array [
 `;
 
 exports[`ArrayUtils batches should return matching elements grouped by batch number 2`] = `
-Array [
-  Array [
+[
+  [
     0,
     1,
     2,
@@ -341,32 +341,32 @@ Array [
 ]
 `;
 
-exports[`ArrayUtils batches should return matching elements grouped by batch number 3`] = `Array []`;
+exports[`ArrayUtils batches should return matching elements grouped by batch number 3`] = `[]`;
 
 exports[`ArrayUtils groupBy should return matching elements grouped by sub-keys 1`] = `
-Object {
-  "blue": Array [
-    Object {
+{
+  "blue": [
+    {
       "color": "blue",
       "n": 1,
     },
-    Object {
+    {
       "color": "blue",
       "n": 2,
     },
   ],
-  "red": Array [
-    Object {
+  "red": [
+    {
       "color": "red",
       "n": 3,
     },
-    Object {
+    {
       "color": "red",
       "n": 4,
     },
   ],
-  "yellow": Array [
-    Object {
+  "yellow": [
+    {
       "color": "yellow",
       "n": 5,
     },
@@ -375,27 +375,27 @@ Object {
 `;
 
 exports[`ArrayUtils groupBy should return matching elements grouped by sub-keys 2`] = `
-Object {
-  "even": Array [
-    Object {
+{
+  "even": [
+    {
       "color": "blue",
       "n": 2,
     },
-    Object {
+    {
       "color": "red",
       "n": 4,
     },
   ],
-  "odd": Array [
-    Object {
+  "odd": [
+    {
       "color": "blue",
       "n": 1,
     },
-    Object {
+    {
       "color": "red",
       "n": 3,
     },
-    Object {
+    {
       "color": "yellow",
       "n": 5,
     },
@@ -404,16 +404,16 @@ Object {
 `;
 
 exports[`ArrayUtils toKeyValueArray should return matching elements grouped by keys 1`] = `
-Object {
-  "blue": Object {
+{
+  "blue": {
     "color": "blue",
     "n": 2,
   },
-  "red": Object {
+  "red": {
     "color": "red",
     "n": 4,
   },
-  "yellow": Object {
+  "yellow": {
     "color": "yellow",
     "n": 5,
   },
@@ -421,7 +421,7 @@ Object {
 `;
 
 exports[`ArrayUtils toKeyValueArray should return matching elements grouped by keys 2`] = `
-Object {
+{
   "blue": 2,
   "red": 4,
   "yellow": 5,
