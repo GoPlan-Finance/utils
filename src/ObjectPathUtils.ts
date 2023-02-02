@@ -5,18 +5,18 @@
 export class ObjectPathUtils {
   static setPathValue<T, U>(obj: T, path: string | string[], value: U): void {
     const a = Array.isArray(path) ? path : path.split('.');
-    let o = obj;
+    let o: unknown = obj;
     while (a.length - 1) {
       const n = a.shift();
-      if (n && !(n in o)) {
+      if (n && !(n in (o as object))) {
         // @ts-expect-error implicit any
-        o[n] = {};
+        (o as object)[n] = {};
       }
       // @ts-expect-error implicit any
       o = o[n];
     }
     // @ts-expect-error implicit any
-    o[a[0]] = value;
+    (o as object)[a[0]] = value;
   }
 
   static getPathValue<U, T = unknown>(obj: T, path: string | string[], defaultVal?: U): U {
@@ -30,16 +30,15 @@ export class ObjectPathUtils {
       a = path.split('.');
     }
 
-    let o = obj;
+    let o: unknown = obj;
     while (a.length) {
       const n = a.shift();
-      if (n && !(n in o)) {
+      if (n && !(n in (o as object))) {
         return defaultVal;
       }
       // @ts-expect-error implicit any
-      o = o[n];
+      o = (o as object)[n];
     }
-    // @ts-expect-error implicit any
-    return o;
+    return o as U;
   }
 }
