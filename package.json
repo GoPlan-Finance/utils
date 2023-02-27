@@ -37,7 +37,7 @@
     "async-mutex": "^0.4.0",
     "axios": "^1.0.0",
     "crypto-js": "^4.1.1",
-    "parse": "^3.2.0",
+    "parse": "^4.0.0",
     "prettier": "^2.3.2",
     "ts-money": "^0.4.6",
     "ts-node": "^10.1.0",
