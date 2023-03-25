@@ -41,7 +41,7 @@
     "prettier": "^2.3.2",
     "ts-money": "^0.4.6",
     "ts-node": "^10.1.0",
-    "typescript": "^4.4.3"
+    "typescript": "^5.0.0"
   },
   "devDependencies": {
     "@types/bson": "4.2.0",
