@@ -225,9 +225,10 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   // Type guard function to narrow the type of value to PointerInterface
-  private isPointerInterface(value: any): value is PointerInterface {
-    return typeof value === 'object' && value.__type === 'Pointer';
+  private isPointerInterface(value: string | PointerInterface | T): value is PointerInterface {
+    return typeof value === 'object' && (value as PointerInterface).__type === 'Pointer';
   }
+
   public async getObjectById(
     objectOrId: string | PointerInterface | T,
     useMasterKey: boolean = undefined
