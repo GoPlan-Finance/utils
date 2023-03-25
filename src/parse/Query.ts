@@ -93,6 +93,11 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
     return this;
   }
 
+  skip(n: number): this {
+    super.skip(n);
+    return this;
+  }
+
   static whereQueries<U extends Parse.Object>(
     handler: 'and' | 'or' | 'nor',
     queries: Array<Query<U>>
