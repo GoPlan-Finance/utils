@@ -224,6 +224,10 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
     return this.get(docId, this.prepareOptions({}, useMasterKey));
   }
 
+  // Type guard function to narrow the type of value to PointerInterface
+  private isPointerInterface(value: any): value is PointerInterface {
+    return typeof value === 'object' && value.__type === 'Pointer';
+  }
   public async getObjectById(
     objectOrId: string | PointerInterface | T,
     useMasterKey: boolean = undefined
@@ -234,7 +238,7 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
       docId = objectOrId;
     } else if (objectOrId instanceof Parse.Object) {
       docId = objectOrId.id;
-    } else if (typeof objectOrId === 'object' && objectOrId.__type === 'Pointer') {
+    } else if (this.isPointerInterface(objectOrId)) {
       if (typeof objectOrId.objectId === 'string') {
         docId = objectOrId.objectId;
       }
