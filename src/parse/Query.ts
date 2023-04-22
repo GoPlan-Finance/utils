@@ -413,6 +413,7 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   async findWithCount(options?: Parse.Query.FindOptions): Promise<QueryResultWithCount<T>> {
+    options = this.prepareOptions(options);
     this.withCount(true);
 
     const objects = (await super.find(options)) as unknown as QueryResultWithCount<T>;
