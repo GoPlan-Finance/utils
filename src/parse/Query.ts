@@ -427,4 +427,9 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
 
     return objects;
   }
+
+  async count(options: Parse.Query.CountOptions): Promise<number> {
+    options = this.prepareOptions(options);
+    return super.count(options);
+  }
 }
