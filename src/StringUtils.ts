@@ -44,7 +44,7 @@ export class StringUtils {
   static localeCompare(
     a: string,
     b: string,
-    sensitivity: 'base' | 'accent' | 'case ' | 'variant'
+    sensitivity: 'base' | 'accent' | 'case' | 'variant'
   ): boolean {
     // https://www.techonthenet.com/js/string_localecompare.php
     return typeof a === 'string' && typeof b === 'string'
