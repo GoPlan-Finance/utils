@@ -9,7 +9,7 @@ export type StringKeys<T> = Extract<keyof T, string>;
 export const processBatch = async <
   T,
   U,
-  V extends boolean | number | null | undefined | void = void
+  V extends boolean | number | null | undefined | void = void,
 >(
   data: Array<T>,
   func: (elem: T) => Promise<U>,
