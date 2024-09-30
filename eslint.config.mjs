@@ -2,7 +2,7 @@
 import globals from "globals";
 import typescriptParser from '@typescript-eslint/parser';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
-import js from '@eslint/js';
+import eslint from '@eslint/js';
 
 export default [
   {
@@ -26,14 +26,13 @@ export default [
         '@typescript-eslint': typescriptPlugin,
     },
     rules: {
-        ...js.configs.recommended.rules,
+        ...eslint.configs.recommended.rules,
         ...typescriptPlugin.configs.recommended.rules,
 
         // Stuff to re-evaluate later
         // '@typescript-eslint/require-ts-comment-description' : 'error',
         '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
-    
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
     
@@ -107,8 +106,11 @@ export default [
       },
     },
     rules: {
-        ...js.configs.recommended.rules,
+        ...eslint.configs.recommended.rules
     },
+  },
+  {
+    ignores: ['dist/**/*', 'coverage/**/*', '.eslintrc.js'],
   }
 ]
 
