@@ -9,7 +9,7 @@ export default [
     files: [
         'src/**/*.ts',
     ],
-    ignores: ['dist/**', 'jest.config.ts'],
+    ignores: ['dist/**/*.ts', 'jest.config.ts'],
     languageOptions: {
         parser: typescriptParser,
         parserOptions: {
@@ -71,9 +71,9 @@ export default [
   {
     // spec files
     files: [
-        '**/*.spec.ts',
+        'spec/**/*.spec.ts',
     ],
-    ignores: ['dist/**', 'jest.config.ts'],
+    ignores: ['dist/**/*.ts', 'jest.config.ts'],
     languageOptions: {
         parser: typescriptParser,
         parserOptions: {
@@ -97,8 +97,17 @@ export default [
   },
   {
     // Configuration for JavaScript files
-    files: ['**/*.js'],
-    ignores: ['dist/**', '.eslintrc.js'],
+    files: ['src/**/*.js'],
+    ignores: ['dist/**/*.js', '.eslintrc.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        Parse: true,
+      },
+    },
+    rules: {
+        ...js.configs.recommended.rules,
+    },
   }
 ]
 
