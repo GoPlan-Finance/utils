@@ -9,7 +9,7 @@ export default [
     files: [
         'src/**/*.ts',
     ],
-    ignores: ['dist/**/*.ts', 'jest.config.ts'],
+    ignores: ['dist/**/*', 'jest.config.ts'],
     languageOptions: {
         parser: typescriptParser,
         parserOptions: {
@@ -73,7 +73,7 @@ export default [
     files: [
         'spec/**/*.spec.ts',
     ],
-    ignores: ['dist/**/*.ts', 'jest.config.ts'],
+    ignores: ['dist/**/*', 'jest.config.ts'],
     languageOptions: {
         parser: typescriptParser,
         parserOptions: {
@@ -98,8 +98,9 @@ export default [
   {
     // Configuration for JavaScript files
     files: ['src/**/*.js'],
-    ignores: ['dist/**/*.js', '.eslintrc.js'],
+    ignores: ['dist/**/*', '.eslintrc.js'],
     languageOptions: {
+      ecmaVersion: 2022,
       globals: {
         ...globals.browser,
         Parse: true,
