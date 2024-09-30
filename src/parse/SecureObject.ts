@@ -94,7 +94,7 @@ export abstract class SecureObject extends BaseObject {
     if (Crypto.isEncrypted(val as unknown as CryptoUtils.EncryptedValue)) {
       throw 'Already encrypted';
 
-      return val as unknown as CryptoUtils.EncryptedValue;
+      // return val as unknown as CryptoUtils.EncryptedValue; // unreachable code [eslint]
     }
 
     if (val instanceof Parse.Object) {
