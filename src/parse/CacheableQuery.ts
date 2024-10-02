@@ -4,8 +4,7 @@
  *
  */
 import * as CryptoJS from 'crypto-js';
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable prefer-rest-params */
+
 import { BaseObject } from './BaseObject';
 import Query, { Constructible, PointerInterface } from './Query';
 

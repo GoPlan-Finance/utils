@@ -41,21 +41,20 @@ describe('ProcessUtils', function () {
       const mock = jest.fn();
 
       const list = [
-        // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async resolve => {
           mock();
           await sleep(100);
           mock();
           resolve();
         }),
-        // eslint-disable-next-line no-async-promise-executor
+
         new Promise<void>(async resolve => {
           mock();
           await sleep(200);
           mock();
           resolve();
         }),
-        // eslint-disable-next-line no-async-promise-executor
+
         new Promise<void>(async resolve => {
           mock();
           await sleep(300);
@@ -73,19 +72,16 @@ describe('ProcessUtils', function () {
       const mock = jest.fn();
 
       const list = [
-        // eslint-disable-next-line no-async-promise-executor
         new Promise<void>(async resolve => {
           await sleep(100);
           mock();
 
           list.push(
-            // eslint-disable-next-line no-async-promise-executor
             new Promise<void>(async resolve => {
               await sleep(300);
               mock();
 
               list.push(
-                // eslint-disable-next-line no-async-promise-executor
                 new Promise<void>(async resolve => {
                   await sleep(300);
                   mock();
@@ -98,7 +94,7 @@ describe('ProcessUtils', function () {
 
           resolve();
         }),
-        // eslint-disable-next-line no-async-promise-executor
+
         new Promise<void>(async resolve => {
           await sleep(200);
           mock();

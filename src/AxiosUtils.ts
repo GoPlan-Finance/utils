@@ -4,7 +4,6 @@ export class AxiosUtils {
   public static axiosGetRequestWithAbortFactory<T = never>(): (
     url: string
   ) => Promise<AxiosResponse<T>> {
-    // eslint-disable-next-line init-declarations
     let call: CancelTokenSource = null;
     return (url: string): Promise<AxiosResponse<T>> => {
       if (call) {
