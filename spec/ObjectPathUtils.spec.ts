@@ -139,5 +139,29 @@ describe('ObjectPathUtils', () => {
         expect(val).toStrictEqual(true);
       });
     });
+
+    describe('object getters', () => {
+      it('should return defaultVal when getter return undefined', function () {
+        const data = {
+          get a(): undefined {
+            return undefined;
+          },
+        };
+
+        const val = ObjectPathUtils.getPathValue(data, ['a', 'b', 'c'], 'defaultValue');
+        expect(val).toStrictEqual('defaultValue');
+      });
+
+      it('should return defaultVal when getter return not an object', function () {
+        const data = {
+          get a(): boolean {
+            return false;
+          },
+        };
+
+        const val = ObjectPathUtils.getPathValue(data, ['a', 'b', 'c'], 'defaultValue');
+        expect(val).toStrictEqual('defaultValue');
+      });
+    });
   });
 });
