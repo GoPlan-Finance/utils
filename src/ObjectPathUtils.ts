@@ -34,7 +34,13 @@ export class ObjectPathUtils {
     while (a.length) {
       const n = a.shift();
       // o[n] can exist as a getter, but be undefined
-      if (n && !(n in (o as object) && o[n] !== undefined))) {
+
+      if (typeof o !== 'object') {
+        return defaultVal;
+      }
+
+      if (n && !(n in (o as object))) {
+        // if (n && !(o || o.hasOwnProperty && o.hasOwnProperty(n) && n in (o as object) )) {
         return defaultVal;
       }
       // @ts-expect-error implicit any
