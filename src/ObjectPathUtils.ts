@@ -33,7 +33,8 @@ export class ObjectPathUtils {
     let o: unknown = obj;
     while (a.length) {
       const n = a.shift();
-      if (n && !(n in (o as object))) {
+      // o[n] can exist as a getter, but be undefined
+      if (n && !(n in (o as object) && o[n] !== undefined))) {
         return defaultVal;
       }
       // @ts-expect-error implicit any
