@@ -38,12 +38,12 @@ interface QueryResultWithCount<T> {
 
 export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   static objectCreationMutexes: Record<string, Mutex> = {};
-  private useWithCount = false;
-  private useInclude: QueryAttributes<T> = [];
-  private sessionToken: string = null;
+  protected useWithCount = false;
+  protected useInclude: QueryAttributes<T> = [];
+  protected sessionToken: string | null = null;
 
   // objectClass : Constructible<T>
-  private masterKey: boolean;
+  protected masterKey: boolean;
 
   constructor(objectClass: Constructible<T>) {
     super(objectClass);
@@ -60,7 +60,13 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
   }
 
   public clone(): Query<T> {
-    return Query.create(this.objectClass as Constructible<T>).withJSON(this.toJSON());
+    const cloned = Query.create(this.objectClass as Constructible<T>).withJSON(this.toJSON());
+    // Preserve our custom state (auth, master key, include tracking) across clones
+    cloned.sessionToken = this.sessionToken;
+    cloned.masterKey = this.masterKey;
+    cloned.useWithCount = this.useWithCount;
+    cloned.useInclude = [...this.useInclude];
+    return cloned;
   }
 
   public runAsUser(user: User | null): this {
@@ -192,7 +198,7 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
       objects.push(...tmpObjects);
     }
 
-    const subscription = await this.subscribe();
+    const subscription = await this.subscribe(this.sessionToken ?? undefined);
     // event: "open" | "create" | "update" | "enter" | "leave" | "delete" | "close"
 
     // subscription.on('open', item => {
@@ -351,7 +357,12 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
       options = {} as Parse.FullOptions;
     }
 
-    options.sessionToken = this.sessionToken ?? null;
+    // Only set sessionToken when we have an explicit token from runAsUser.
+    // Setting null/undefined would force unauthenticated context.
+    // This ensures runAsUser works reliably, and default behavior delegates to Parse context.
+    if (this.sessionToken) {
+      options.sessionToken = this.sessionToken;
+    }
 
     if (this.masterKey === true) {
       options.useMasterKey = true;
@@ -428,8 +439,55 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
     return objects;
   }
 
-  async count(options: Parse.Query.CountOptions): Promise<number> {
+  async count(options?: Parse.Query.CountOptions): Promise<number> {
     options = this.prepareOptions(options);
     return super.count(options);
+  }
+
+  public async first(options?: Parse.Query.FirstOptions): Promise<T | undefined> {
+    options = this.prepareOptions(options);
+
+    const obj = await super.first(options);
+
+    if (obj instanceof SecureObject) {
+      await (obj as SecureObject).decrypt();
+    }
+
+    return obj;
+  }
+
+  // Overloads to support passing options (for sessionToken) while remaining compatible
+  // with base Parse.Query types (which omit the options param in .d.ts but runtime accepts it)
+  public aggregate<V = any>(pipeline: Parse.Query.AggregationOptions | Parse.Query.AggregationOptions[]): Promise<V>;
+  public aggregate<V = any>(pipeline: any, options?: any): Promise<V> {
+    options = this.prepareOptions(options);
+    return (super.aggregate as any)(pipeline, options);
+  }
+
+  public distinct<K extends keyof T['attributes'], V = T['attributes'][K]>(key: K): Promise<V[]>;
+  public distinct<V = any>(key: string, options?: any): Promise<V[]> {
+    options = this.prepareOptions(options);
+    return (super.distinct as any)(key, options);
+  }
+
+  public async findAll(options?: Parse.Query.BatchOptions): Promise<T[]> {
+    options = this.prepareOptions(options);
+    const objects = await super.findAll(options);
+    await this.maybeDecrypt(objects);
+    return objects;
+  }
+
+  public async each(
+    callback: (obj: T) => PromiseLike<void> | void,
+    options?: Parse.Query.BatchOptions
+  ): Promise<void> {
+    options = this.prepareOptions(options);
+    return super.each(callback, options);
+  }
+
+  public subscribe(sessionToken?: string): Promise<Parse.LiveQuerySubscription> {
+    // Prefer explicit arg, fall back to runAsUser token for auth
+    const token = sessionToken ?? this.sessionToken ?? undefined;
+    return super.subscribe(token);
   }
 }
