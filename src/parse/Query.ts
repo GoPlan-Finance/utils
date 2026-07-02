@@ -458,15 +458,19 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   // Overloads to support passing options (for sessionToken) while remaining compatible
   // with base Parse.Query types (which omit the options param in .d.ts but runtime accepts it)
-  public aggregate<V = any>(pipeline: Parse.Query.AggregationOptions | Parse.Query.AggregationOptions[]): Promise<V>;
-  public aggregate<V = any>(pipeline: any, options?: any): Promise<V> {
+  public aggregate<V = unknown>(pipeline: Parse.Query.AggregationOptions | Parse.Query.AggregationOptions[]): Promise<V>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-dupe-class-members
+  public aggregate(pipeline: any, options?: any): Promise<any> {
     options = this.prepareOptions(options);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (super.aggregate as any)(pipeline, options);
   }
 
   public distinct<K extends keyof T['attributes'], V = T['attributes'][K]>(key: K): Promise<V[]>;
-  public distinct<V = any>(key: string, options?: any): Promise<V[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-dupe-class-members
+  public distinct(key: string, options?: any): Promise<any[]> {
     options = this.prepareOptions(options);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (super.distinct as any)(key, options);
   }
 

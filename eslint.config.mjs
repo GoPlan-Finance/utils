@@ -15,7 +15,7 @@ export default [
         parserOptions: {
             ecmaVersion: 6,
             node: true,
-            project: './tsconfig.json',
+            project: './tsconfig.eslint.json',
         },
         globals: {
             ...globals.browser,
@@ -78,7 +78,7 @@ export default [
         parserOptions: {
             ecmaVersion: 6,
             node: true,
-            project: './tsconfig.json',
+            project: './tsconfig.eslint.json',
         },
         globals: {
             ...globals.node,
