@@ -6,6 +6,10 @@
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 
+function encodeUtf8(str: string): Uint8Array<ArrayBuffer> {
+  return enc.encode(str) as Uint8Array<ArrayBuffer>;
+}
+
 export interface EncryptedValue {
   ct: string;
   iv: string;
@@ -62,11 +66,12 @@ export default class Crypto {
     return btoa(String.fromCharCode.apply(null, buff));
   }
 
-  static strToBuff(b64: string): Uint8Array {
-    return Uint8Array.from(atob(b64), c => c.charCodeAt(null));
+  static strToBuff(b64: string): Uint8Array<ArrayBuffer> {
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    return bytes as Uint8Array<ArrayBuffer>;
   }
 
-  public static randomSalt(): Uint8Array {
+  public static randomSalt(): Uint8Array<ArrayBuffer> {
     const size = 128;
     return Crypto.randomWords(size / 8);
   }
@@ -79,14 +84,15 @@ export default class Crypto {
       const key = await Crypto.importKey(derivedKey.PBKDF2);
 
       const iv = Crypto.randomIv();
-      const encryptedContent = await window.crypto.subtle.encrypt(
+      const plainText = encodeUtf8(JSON.stringify(data !== undefined ? data : null));
+      const encryptedContent = (await window.crypto.subtle.encrypt(
         {
           name: 'AES-GCM',
           iv,
         },
         key,
-        enc.encode(JSON.stringify(data !== undefined ? data : null))
-      );
+        plainText
+      )) as ArrayBuffer;
 
       return {
         iv: Crypto.buffToStr(iv),
@@ -121,10 +127,11 @@ export default class Crypto {
     return await window.crypto.subtle.exportKey('jwk', derivedKey);
   }
 
-  static async PBKDF2(masterKey: string, salt: Uint8Array): Promise<DerivedKey> {
+  static async PBKDF2(masterKey: string, salt: Uint8Array<ArrayBuffer>): Promise<DerivedKey> {
+    const keyMaterial = encodeUtf8(masterKey);
     const key = await window.crypto.subtle.importKey(
       'raw',
-      enc.encode(masterKey),
+      keyMaterial,
       'PBKDF2',
       false,
       ['deriveKey']
@@ -176,8 +183,8 @@ export default class Crypto {
     }
   }
 
-  static randomWords(len: number): Uint8Array {
-    return window.crypto.getRandomValues(new Uint8Array(len));
+  static randomWords(len: number): Uint8Array<ArrayBuffer> {
+    return window.crypto.getRandomValues(new Uint8Array(len)) as Uint8Array<ArrayBuffer>;
   }
 
   private static randomIv() {
