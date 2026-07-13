@@ -11,14 +11,7 @@ import { SecureObject } from './SecureObject';
 import { ObjectPathUtils } from '../ObjectPathUtils';
 
 export type LiveQueryUpdateFnEventType =
-  | null
-  | 'open'
-  | 'create'
-  | 'update'
-  | 'enter'
-  | 'leave'
-  | 'delete'
-  | 'close';
+  null | 'open' | 'create' | 'update' | 'enter' | 'leave' | 'delete' | 'close';
 
 export type LiveQueryUpdateFn<T> = (obj: T, event: LiveQueryUpdateFnEventType) => void;
 export type Constructible<T> = new (...args: unknown[]) => T;
@@ -458,7 +451,9 @@ export default class Query<T extends Parse.Object> extends Parse.Query<T> {
 
   // Overloads to support passing options (for sessionToken) while remaining compatible
   // with base Parse.Query types (which omit the options param in .d.ts but runtime accepts it)
-  public aggregate<V = unknown>(pipeline: Parse.Query.AggregationOptions | Parse.Query.AggregationOptions[]): Promise<V>;
+  public aggregate<V = unknown>(
+    pipeline: Parse.Query.AggregationOptions | Parse.Query.AggregationOptions[]
+  ): Promise<V>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-dupe-class-members
   public aggregate(pipeline: any, options?: any): Promise<any> {
     options = this.prepareOptions(options);
