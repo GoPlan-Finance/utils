@@ -129,13 +129,9 @@ export default class Crypto {
 
   static async PBKDF2(masterKey: string, salt: Uint8Array<ArrayBuffer>): Promise<DerivedKey> {
     const keyMaterial = encodeUtf8(masterKey);
-    const key = await window.crypto.subtle.importKey(
-      'raw',
-      keyMaterial,
-      'PBKDF2',
-      false,
-      ['deriveKey']
-    );
+    const key = await window.crypto.subtle.importKey('raw', keyMaterial, 'PBKDF2', false, [
+      'deriveKey',
+    ]);
 
     const derivedKey = await window.crypto.subtle.deriveKey(
       {
