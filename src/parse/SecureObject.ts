@@ -74,8 +74,8 @@ export abstract class SecureObject extends BaseObject {
   clone(): this {
     const clone = super.clone();
 
-    for (const [k, v] of Object.entries(clone._decryptedReadCache)) {
-      this._decryptedReadCache[k] = v;
+    for (const [k, v] of Object.entries(this._decryptedReadCache)) {
+      clone._decryptedReadCache[k] = v;
     }
     return clone;
   }
