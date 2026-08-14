@@ -88,4 +88,14 @@ describe('ObjectUtils', () => {
       expect(beta['b']).toBe(alpha['b']);
     });
   });
+
+  describe('deepEquals', () => {
+    it('should return true for deeply equal objects', function () {
+      expect(ObjectUtils.deepEquals({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 2 } })).toBe(true);
+    });
+
+    it('should return false for objects with different values', function () {
+      expect(ObjectUtils.deepEquals({ a: 1 }, { a: 2 })).toBe(false);
+    });
+  });
 });

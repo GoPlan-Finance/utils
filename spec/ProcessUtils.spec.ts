@@ -34,6 +34,35 @@ describe('ProcessUtils', function () {
       const results: number[] = await processBatch(list, worker, status, 2);
       expect(results.length).toBe(3);
     });
+
+    it('should return results aligned with input order regardless of completion order', async () => {
+      // Larger inputs finish later, so completion order differs from input order.
+      const delays = [30, 5, 20, 1, 15];
+      const worker = async (ms: number): Promise<number> => {
+        await sleep(ms);
+        return ms;
+      };
+
+      const results = await processBatch(delays, worker, null, 8);
+
+      expect(results).toStrictEqual(delays);
+    });
+
+    it('should capture a thrown error as that element result instead of rejecting', async () => {
+      const worker = async (n: number): Promise<number> => {
+        if (n === 1) {
+          throw new Error('boom');
+        }
+        return n;
+      };
+
+      const results = await processBatch([0, 1, 2], worker, null, 8);
+
+      expect(results[0]).toBe(0);
+      expect(results[1]).toBeInstanceOf(Error);
+      expect((results[1] as unknown as Error).message).toBe('boom');
+      expect(results[2]).toBe(2);
+    });
   });
 
   describe('PromiseWaitAllNested', function () {

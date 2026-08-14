@@ -10,11 +10,13 @@ describe('ArrayUtils', () => {
       expect(val).toStrictEqual([1, 2, 3, 4]);
     });
 
-    it('should remove duplicate items', function () {
-      const data = [1, 2, 3, 4, 4, 4];
+    it('should pass the index to the initializer', function () {
+      const val = ArrayUtils.fillWith(3, index => index * 2);
+      expect(val).toStrictEqual([0, 2, 4]);
+    });
 
-      const val = ArrayUtils.unique(data);
-      expect(val).toStrictEqual([1, 2, 3, 4]);
+    it('should return an empty array for length 0', function () {
+      expect(ArrayUtils.fillWith(0, () => 1)).toStrictEqual([]);
     });
   });
 
@@ -153,53 +155,37 @@ describe('ArrayUtils', () => {
   });
 
   describe('randomElement', () => {
-    it('should return one of the array element randomly', () => {
-      const setMock = (val: number) => {
-        const mockMath = Object.create(global.Math);
-        mockMath.random = () => val;
-        global.Math = mockMath;
-      };
+    let randomSpy: jest.SpyInstance;
 
-      const arr = Array.from(Array(100).keys());
-
-      setMock(0);
-      expect(ArrayUtils.randomElement(arr)).toBe(0);
-
-      setMock(0.01);
-      expect(ArrayUtils.randomElement(arr)).toBe(0);
-
-      setMock(0.5);
-      expect(ArrayUtils.randomElement(arr)).toBe(49);
-
-      setMock(1);
-      expect(ArrayUtils.randomElement(arr)).toBe(99);
+    afterEach(() => {
+      randomSpy?.mockRestore();
     });
 
-    it('should return one of the array element randomly', () => {
-      const setMock = (val: number) => {
-        const mockMath = Object.create(global.Math);
-        mockMath.random = () => val;
-        global.Math = mockMath;
-      };
+    const mockRandom = (val: number) => {
+      randomSpy = jest.spyOn(Math, 'random').mockReturnValue(val);
+    };
 
+    it('should map Math.random() across the full index range', () => {
       const arr = Array.from(Array(100).keys());
 
-      setMock(0);
+      mockRandom(0);
       expect(ArrayUtils.randomElement(arr)).toBe(0);
 
-      setMock(0.01);
-      expect(ArrayUtils.randomElement(arr)).toBe(0);
+      mockRandom(0.5);
+      expect(ArrayUtils.randomElement(arr)).toBe(50);
+    });
 
-      setMock(0.5);
-      expect(ArrayUtils.randomElement(arr)).toBe(49);
+    it('should be able to return the LAST element (regression: off-by-one)', () => {
+      // Math.random() returns [0, 1); a value just below 1 must select the final index.
+      mockRandom(0.999999);
+      expect(ArrayUtils.randomElement([10, 20, 30])).toBe(30);
 
-      setMock(1);
-      expect(ArrayUtils.randomElement(arr)).toBe(99);
+      // A two-element array must be able to yield its second element.
+      mockRandom(0.5);
+      expect(ArrayUtils.randomElement([1, 2])).toBe(2);
     });
 
     it('should throw when provided array is empty', () => {
-      const arr = Array.from(Array(100).keys());
-
       expect(() => ArrayUtils.randomElement([])).toThrowError('provided array is empty');
     });
   });
@@ -219,10 +205,79 @@ describe('ArrayUtils', () => {
       });
     });
 
-    it('should throw when provided array is empty', () => {
-      const arr = Array.from(Array(100).keys());
+    it('should return null when the array is empty', () => {
+      const output = ArrayUtils.filterByValue(
+        [],
+        (a, b) => a > b,
+        elem => elem
+      );
 
-      expect(() => ArrayUtils.randomElement([])).toThrowError('provided array is empty');
+      expect(output).toBeNull();
+    });
+  });
+
+  describe('shuffle', () => {
+    it('should keep the same elements (as a multiset)', () => {
+      const input = [1, 2, 3, 4, 5];
+      const result = ArrayUtils.shuffle([...input]);
+
+      expect(result).toHaveLength(input.length);
+      expect([...result].sort((a, b) => a - b)).toStrictEqual(input);
+    });
+  });
+
+  describe('uniqueByKey', () => {
+    it('should keep the first item for each distinct key value', () => {
+      const data = [
+        { id: 1, name: 'a' },
+        { id: 1, name: 'b' },
+        { id: 2, name: 'c' },
+      ];
+
+      expect(ArrayUtils.uniqueByKey(data, 'id')).toStrictEqual([
+        { id: 1, name: 'a' },
+        { id: 2, name: 'c' },
+      ]);
+    });
+  });
+
+  describe('sortByKey', () => {
+    const data = () => [{ v: 3 }, { v: 1 }, { v: 2 }];
+
+    it('should sort ascending by default', () => {
+      expect(ArrayUtils.sortByKey(data(), 'v')).toStrictEqual([{ v: 1 }, { v: 2 }, { v: 3 }]);
+    });
+
+    it('should sort descending when ascending is false', () => {
+      expect(ArrayUtils.sortByKey(data(), 'v', false)).toStrictEqual([
+        { v: 3 },
+        { v: 2 },
+        { v: 1 },
+      ]);
+    });
+  });
+
+  describe('toKeyArray', () => {
+    it('should index objects by the given key', () => {
+      const data = [
+        { id: 'a', n: 1 },
+        { id: 'b', n: 2 },
+      ];
+
+      expect(ArrayUtils.toKeyArray(data, 'id')).toStrictEqual({
+        a: { id: 'a', n: 1 },
+        b: { id: 'b', n: 2 },
+      });
+    });
+  });
+
+  describe('sum', () => {
+    it('should sum the values produced by the callback', () => {
+      expect(ArrayUtils.sum([{ n: 1 }, { n: 2 }, { n: 3 }], item => item.n)).toBe(6);
+    });
+
+    it('should return 0 for an empty array', () => {
+      expect(ArrayUtils.sum([], (item: { n: number }) => item.n)).toBe(0);
     });
   });
 });
