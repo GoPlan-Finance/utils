@@ -14,7 +14,7 @@ export class ArrayUtils {
       throw new Error('provided array is empty');
     }
 
-    return items[Math.floor(Math.random() * (items.length - 1))];
+    return items[Math.floor(Math.random() * items.length)];
   }
 
   static fillWith<T>(length: number, initializer: (index: number) => T): T[] {

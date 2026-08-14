@@ -6,6 +6,18 @@ export function sleep(ms: number): Promise<void> {
 
 export type StringKeys<T> = Extract<keyof T, string>;
 
+/**
+ * Run `func` over `data` with at most `nbParallel` concurrent executions.
+ *
+ * Result contract:
+ * - The returned array is aligned with the input: `results[i]` is the outcome of `data[i]`,
+ *   regardless of the order in which the individual promises settle.
+ * - Errors are captured, not thrown: if `func` rejects for an element, the rejection reason
+ *   (typically an `Error`) is logged and stored as that element's result. Callers that need to
+ *   distinguish failures should check for `Error` instances in the returned array.
+ * - If `statusFunc` returns `false`, no new work is started; elements not yet processed are left
+ *   as empty slots in the returned array.
+ */
 export const processBatch = async <
   T,
   U,
@@ -36,7 +48,7 @@ export const processBatch = async <
       abortAll = true;
     }
 
-    results.push(result);
+    results[curIndex] = result;
 
     ++iCompleted;
   };
