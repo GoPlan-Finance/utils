@@ -1,0 +1,10 @@
+{
+  "name": "@goplan-finance/utils",
+  "install": "yarn install",
+  "terminals": [
+    {
+      "name": "tsc-watch",
+      "command": "yarn watch"
+    }
+  ]
+}
