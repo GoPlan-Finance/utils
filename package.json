@@ -39,7 +39,7 @@
     "crypto-js": "^4.2.0"
   },
   "peerDependencies": {
-    "parse": ">=5.3.0 <8",
+    "parse": ">=5.3.0 <9",
     "ts-money": "^0.4.8"
   },
   "devDependencies": {
@@ -54,7 +54,7 @@
     "eslint-plugin-varspacing": "1.2.2",
     "eslint-plugin-vue": "9.29.1",
     "jest": "^29.7.0",
-    "parse": "^7.1.2",
+    "parse": "^8.0.0",
     "pre-commit": "1.2.2",
     "prettier": "^3.0.0",
     "ts-jest": "^29.0.5",
